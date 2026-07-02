@@ -1,0 +1,7 @@
+rest:
+  ssl: true
+  host: ri.fdv.br
+  port: 443
+  nameSpace: /server
+
+defaultLanguage: pt_BR
