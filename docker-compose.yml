@@ -137,7 +137,7 @@ services:
       TZ: America/Sao_Paulo
     image: "fdv/angular:${DSPACE_VERSION}"
     build:
-      context: ./ui
+      context: .
       dockerfile: ui-dist.dockerfile
     networks:
       dspacenet:
