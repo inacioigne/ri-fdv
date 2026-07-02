@@ -14,7 +14,7 @@ services:
       solr__P__server: ${solr__P__server:-http://dspacesolr:8983/solr}
       proxies__P__trusted__P__ipranges: ${proxies__P__trusted__P__ipranges:-172.23.0}
       LOGGING_CONFIG: /dspace/config/log4j2-container.xml
-      TZ: America/Manaus
+      TZ: America/Sao_Paulo
     image: "docker.io/fdv/api:${DSPACE_VERSION}"
 
     build:
@@ -59,7 +59,7 @@ services:
       POSTGRES_DB: dspace
       POSTGRES_USER: dspace
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      TZ: America/Vitoria
+      TZ: America/Sao_Paulo
     networks:
       dspacenet:
     ports:
@@ -88,7 +88,7 @@ services:
         SOLR_VERSION: "${SOLR_VER:-9.8}"
     image: "fdv/dspace-solr:${DSPACE_VERSION}"
     environment:
-      TZ: America/Vitoria
+      TZ: America/Sao_Paulo
     networks:
       - dspacenet
     ports:
@@ -134,7 +134,7 @@ services:
       DSPACE_REST_HOST: ri.fdv.br
       DSPACE_REST_PORT: 443
       DSPACE_REST_NAMESPACE: /server
-      TZ: America/Vitoria
+      TZ: America/Sao_Paulo
     image: "fdv/angular:${DSPACE_VERSION}"
     build:
       context: ./ui
