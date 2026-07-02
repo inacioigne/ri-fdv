@@ -1,9 +1,9 @@
 FROM docker.io/node:22-alpine
 RUN npm install --global pm2
 
-COPY --chown=node:node ui/dist /app/dist
-COPY --chown=node:node ui/config /app/config
-COPY --chown=node:node ui/docker/dspace-ui.json /app/dspace-ui.json
+COPY --chown=node:node /dist /app/dist
+COPY --chown=node:node /config /app/config
+COPY --chown=node:node /docker/dspace-ui.json /app/dspace-ui.json
 
 WORKDIR /app
 USER node
