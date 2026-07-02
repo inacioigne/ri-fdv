@@ -131,14 +131,14 @@ services:
       DSPACE_UI_PORT: '4000'
       DSPACE_UI_NAMESPACE: /
       DSPACE_REST_SSL: 'true'
-      DSPACE_REST_HOST: ri.inpa.gov.br
+      DSPACE_REST_HOST: ri.fdv.br
       DSPACE_REST_PORT: 443
       DSPACE_REST_NAMESPACE: /server
       TZ: America/Vitoria
     image: "fdv/angular:${DSPACE_VERSION}"
     build:
       context: ./ui
-      dockerfile: Dockerfile.dist
+      dockerfile: ui-dist.dockerfile
     networks:
       dspacenet:
     ports:
