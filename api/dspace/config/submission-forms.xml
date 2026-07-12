@@ -32,9 +32,6 @@
             </row>
         </form>
 
-        <!-- Form which defines the first page/section of the "traditional" DSpace submission
-        process,
-             often used when depositing normal Items (i.e. Items which are not Entities). -->
         <form name="traditionalpageone">
             <row>
                 <field>
@@ -52,6 +49,35 @@
             <row>
                 <field>
                     <dc-schema>dc</dc-schema>
+                    <dc-element>title</dc-element>
+                    <dc-qualifier></dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Título:</label>
+                    <input-type>onebox</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Informe o título
+                        do documento. Recomenda-se preencher com a tradução do título da tese ou
+                        dissertação para o inglês para maior visibilidade do documento.</hint>
+                    <required>CAMPO OBRIGATÓRIO: Informe o título do documento. Recomenda-se
+                        preencher com a tradução do título da tese ou dissertação para o inglês para
+                        maior visibilidade do documento.</required>
+                </field>
+            </row>
+            <field>
+                <dc-schema>dc</dc-schema>
+                <dc-element>title</dc-element>
+                <dc-qualifier>alternative</dc-qualifier>
+                <repeatable>true</repeatable>
+                <label>Título(s) alternativo(s):</label>
+                <input-type>onebox</input-type>
+                <hint>&lt;font color="#449d44"&gt;CAMPO OPCIONAL: &lt;/font&gt;Informe o título
+                    alternativo. Recomenda-se preencher com
+                    a tradução do título da tese ou dissertação para o inglês, para maior
+                    visibilidade do documento.</hint>
+                <required></required>
+            </field>
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
                     <dc-element>contributor</dc-element>
                     <dc-qualifier>author</dc-qualifier>
                     <repeatable>true</repeatable>
@@ -61,30 +87,7 @@
                     <required></required>
                 </field>
             </row>
-            <row>
-                <field>
-                    <dc-schema>dc</dc-schema>
-                    <dc-element>title</dc-element>
-                    <dc-qualifier></dc-qualifier>
-                    <repeatable>false</repeatable>
-                    <label>Title</label>
-                    <input-type>onebox</input-type>
-                    <hint>Enter the main title of the item.</hint>
-                    <required>You must enter a main title for this item.</required>
-                </field>
-            </row>
-            <row>
-                <field>
-                    <dc-schema>dc</dc-schema>
-                    <dc-element>title</dc-element>
-                    <dc-qualifier>alternative</dc-qualifier>
-                    <repeatable>true</repeatable>
-                    <label>Other Titles</label>
-                    <input-type>onebox</input-type>
-                    <hint>If the item has any alternative titles, please enter them here.</hint>
-                    <required></required>
-                </field>
-            </row>
+
             <row>
                 <field>
                     <dc-schema>dc</dc-schema>
@@ -1311,20 +1314,6 @@
 
     </form-definitions>
 
-
-    <!-- form-value-pairs populate dropdown and qualdrop-value lists.          -->
-    <!-- The form-value-pairs element holds child elements named 'value-pairs' -->
-    <!-- A 'value-pairs' element has a value-pairs-name and a dc-term          -->
-    <!-- attribute. The dc-term attribute specifies which to which Dublin Core -->
-    <!-- Term this set of value-pairs applies.                                 -->
-    <!--     Current dc-terms are: identifier-pairs, type-pairs, and           -->
-    <!--     language_iso-pairs. The name attribute matches a name             -->
-    <!--     in the form-map, above.                                           -->
-    <!-- A value-pair contains one 'pair' for each value displayed in the list -->
-    <!-- Each pair contains a 'displayed-value' element and a 'stored-value'   -->
-    <!-- element. A UI list displays the displayed-values, but the program     -->
-    <!-- stores the associated stored-values in the database.                  -->
-
     <form-value-pairs>
         <value-pairs value-pairs-name="common_identifiers" dc-term="identifier">
             <pair>
@@ -1355,92 +1344,40 @@
 
         <value-pairs value-pairs-name="common_types" dc-term="type">
             <pair>
-                <displayed-value>Animation</displayed-value>
-                <stored-value>Animation</stored-value>
+                <displayed-value>Artigo de Periódico</displayed-value>
+                <stored-value>Artigo de Periódico</stored-value>
             </pair>
             <pair>
-                <displayed-value>Article</displayed-value>
-                <stored-value>Article</stored-value>
+                <displayed-value>Artigo de Evento</displayed-value>
+                <stored-value>Artigo de Evento</stored-value>
             </pair>
             <pair>
-                <displayed-value>Book</displayed-value>
-                <stored-value>Book</stored-value>
+                <displayed-value>Tese</displayed-value>
+                <stored-value>Tese</stored-value>
             </pair>
             <pair>
-                <displayed-value>Book chapter</displayed-value>
-                <stored-value>Book chapter</stored-value>
+                <displayed-value>Dissertação</displayed-value>
+                <stored-value>Dissertação</stored-value>
             </pair>
             <pair>
-                <displayed-value>Dataset</displayed-value>
-                <stored-value>Dataset</stored-value>
+                <displayed-value>Trabalho de Conclusão de Curso</displayed-value>
+                <stored-value>Trabalho de Conclusão de Curso</stored-value>
             </pair>
             <pair>
-                <displayed-value>Learning Object</displayed-value>
-                <stored-value>Learning Object</stored-value>
+                <displayed-value>Livro</displayed-value>
+                <stored-value>Livro</stored-value>
             </pair>
             <pair>
-                <displayed-value>Image</displayed-value>
-                <stored-value>Image</stored-value>
+                <displayed-value>Capítulo de Livro</displayed-value>
+                <stored-value>Capítulo de Livro</stored-value>
             </pair>
             <pair>
-                <displayed-value>Image, 3-D</displayed-value>
-                <stored-value>Image, 3-D</stored-value>
+                <displayed-value>Relatório de Pesquisa</displayed-value>
+                <stored-value>Relatório de Pesquisa</stored-value>
             </pair>
             <pair>
-                <displayed-value>Map</displayed-value>
-                <stored-value>Map</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Musical Score</displayed-value>
-                <stored-value>Musical Score</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Plan or blueprint</displayed-value>
-                <stored-value>Plan or blueprint</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Preprint</displayed-value>
-                <stored-value>Preprint</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Presentation</displayed-value>
-                <stored-value>Presentation</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Recording, acoustical</displayed-value>
-                <stored-value>Recording, acoustical</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Recording, musical</displayed-value>
-                <stored-value>Recording, musical</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Recording, oral</displayed-value>
-                <stored-value>Recording, oral</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Software</displayed-value>
-                <stored-value>Software</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Technical Report</displayed-value>
-                <stored-value>Technical Report</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Thesis</displayed-value>
-                <stored-value>Thesis</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Video</displayed-value>
-                <stored-value>Video</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Working Paper</displayed-value>
-                <stored-value>Working Paper</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Other</displayed-value>
-                <stored-value>Other</stored-value>
+                <displayed-value>Outro tipo de documento</displayed-value>
+                <stored-value>Outro</stored-value>
             </pair>
         </value-pairs>
 
