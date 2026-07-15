@@ -15,7 +15,7 @@ WORKDIR /app
 # Copy over package files first, so this layer will only be rebuilt if those files change.
 COPY package.json package-lock.json ./
 # NOTE: "ci" = clean install from package files
-RUN npm ci --legacy-peer-deps
+RUN npm ci
 
 # Around 4GB of memory is required to build the app for production.
 # This default setting can be overridden as needed in your shell, via an env file or in docker-compose.

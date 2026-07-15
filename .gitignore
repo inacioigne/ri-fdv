@@ -3,3 +3,4 @@ local.cfg
 ui/dist.tar.gz
 legacy
 GeoLite2-City.mmdb
+ui-tmp
