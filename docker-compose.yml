@@ -23,9 +23,9 @@ services:
         DSPACE_VERSION: ${DSPACE_VERSION}
     
     depends_on:
-      fdv-db:
+      dspacedb:
         condition: service_healthy
-      fdv-solr:
+      dspacesolr:
         condition: service_healthy
     networks:
       - dspacenet
@@ -39,7 +39,7 @@ services:
       - /bin/bash
       - '-c'
       - |
-        while (!</dev/tcp/fdv-db/5432) > /dev/null 2>&1; do sleep 1; done;
+        while (!</dev/tcp/dspacedb/5432) > /dev/null 2>&1; do sleep 1; done;
         /dspace/bin/dspace database migrate
         java -jar /dspace/webapps/server-boot.jar --dspace.dir=/dspace
     healthcheck:
