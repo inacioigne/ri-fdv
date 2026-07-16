@@ -6,12 +6,12 @@ networks:
 
 services:
   api:
-    container_name: api
+    container_name: fdv-api
     env_file:
       - .env
     environment:
-      db__P__url: ${db__P__url:-jdbc:postgresql://dspacedb:5432/dspace}
-      solr__P__server: ${solr__P__server:-http://dspacesolr:8983/solr}
+      db__P__url: ${db__P__url:-jdbc:postgresql://fdv-db:5432/dspace}
+      solr__P__server: ${solr__P__server:-http://fdv-solr:8983/solr}
       proxies__P__trusted__P__ipranges: ${proxies__P__trusted__P__ipranges:-172.23.0}
       LOGGING_CONFIG: /dspace/config/log4j2-container.xml
       TZ: America/Sao_Paulo
@@ -51,7 +51,7 @@ services:
     restart: unless-stopped
 
   dspacedb:
-    container_name: dspacedb
+    container_name: fdv-db
     env_file:
       - .env
     image: "docker.io/postgres:${POSTGRES_VERSION:-15}"
@@ -63,9 +63,11 @@ services:
       TZ: America/Sao_Paulo
     networks:
       dspacenet:
-    ports:
-    - published: 5432
-      target: 5432
+    expose:
+      - 5432
+    # ports:
+    # - published: 5432
+    #   target: 5432
     stdin_open: true
     tty: true
     volumes:
@@ -78,7 +80,7 @@ services:
     restart: unless-stopped
 
   dspacesolr:
-    container_name: dspacesolr
+    container_name: fdv-solr
     env_file:
       - .env
     build:
@@ -92,8 +94,8 @@ services:
       TZ: America/Sao_Paulo
     networks:
       - dspacenet
-    ports:
-      - "8983:8983"
+    # ports:
+    #   - "8983:8983"
     working_dir: /var/solr/data
     user: root
     volumes:
@@ -125,7 +127,7 @@ services:
     restart: unless-stopped
   
   ui:
-    container_name: ui
+    container_name: fdv-ui
     environment:
       DSPACE_UI_SSL: 'false'
       DSPACE_UI_HOST: ui
