@@ -16,7 +16,6 @@ services:
       LOGGING_CONFIG: /dspace/config/log4j2-container.xml
       TZ: America/Sao_Paulo
     image: "docker.io/fdv/api:${DSPACE_VERSION}"
-
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -24,9 +23,9 @@ services:
         DSPACE_VERSION: ${DSPACE_VERSION}
     
     depends_on:
-      dspacedb:
+      fdv-db:
         condition: service_healthy
-      dspacesolr:
+      fdv-solr:
         condition: service_healthy
     networks:
       - dspacenet
@@ -40,7 +39,7 @@ services:
       - /bin/bash
       - '-c'
       - |
-        while (!</dev/tcp/dspacedb/5432) > /dev/null 2>&1; do sleep 1; done;
+        while (!</dev/tcp/fdv-db/5432) > /dev/null 2>&1; do sleep 1; done;
         /dspace/bin/dspace database migrate
         java -jar /dspace/webapps/server-boot.jar --dspace.dir=/dspace
     healthcheck:
