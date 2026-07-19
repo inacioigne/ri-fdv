@@ -5,3 +5,27 @@ rest:
   nameSpace: /server
 
 defaultLanguage: pt_BR
+
+# Theme Config
+themes:
+  - name: fdv
+    prefetch: true
+    headTags:
+    - tagName: link
+      attributes:
+        rel: icon
+        href: assets/fdv/images/favicons/favicon.ico
+        sizes: any
+    - tagName: link
+      attributes:
+        rel: icon
+        href: assets/fdv/images/favicons/favicon.svg
+        type: image/svg+xml
+    - tagName: link
+      attributes:
+        rel: apple-touch-icon
+        href: assets/fdv/images/favicons/apple-touch-icon.png
+    - tagName: link
+      attributes:
+        rel: manifest
+        href: assets/fdv/images/favicons/manifest.webmanifest
