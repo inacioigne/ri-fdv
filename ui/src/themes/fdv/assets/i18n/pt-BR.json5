@@ -1,4 +1,9 @@
 {
   // DSpace default: "DSpace Angular :: "
   "repository.title.prefix": "RI FDV :: ",
+  "form.number-picker.label.Ano": "Ano",
+
+  "form.number-picker.label.Mês": "Mês",
+
+  "form.number-picker.label.Dia": "Dia",
 }
