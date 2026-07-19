@@ -359,8 +359,10 @@
                     <label>Segundo orientador:</label>
                     <type-bind>Tese, Dissertação, Trabalho de Conclusão de Curso</type-bind>
                     <input-type>name</input-type>
-                    <hint>CAMPO OPCIONAL: Informe o nome do segundo orientador, conforme o formato
-                        de citação.</hint>
+                    <hint>&lt;div class="alert alert-info"&gt;Descrição do &lt;strong&gt;SEGUNDO
+                        ORIENTADOR&lt;/strong&gt;&lt;/div&gt; &lt;font color="#449d44"&gt;CAMPO
+                        OPCIONAL: &lt;/font&gt; Informe o nome do segundo orientador, conforme o
+                        formato de citação.</hint>
                     <required></required>
                 </field>
             </row>
@@ -375,7 +377,8 @@
                         target="_blank" &gt;URL do Currículo Lattes&lt;/a&gt; do orientador:</label>
                     <type-bind>Tese, Dissertação, Trabalho de Conclusão de Curso</type-bind>
                     <input-type>onebox</input-type>
-                    <hint>CAMPO OPCIONAL: Informe a URL do currículo lattes do orientador.</hint>
+                    <hint>&lt;font color="#449d44"&gt;CAMPO OPCIONAL: &lt;/font&gt; Informe a URL do
+                        currículo lattes do orientador.</hint>
                     <required></required>
                 </field>
             </row>
@@ -388,8 +391,9 @@
                     <label>Identificador único do orientador:</label>
                     <type-bind>Tese, Dissertação, Trabalho de Conclusão de Curso</type-bind>
                     <input-type>onebox</input-type>
-                    <hint>CAMPO OPCIONAL: Informe o identificador único do orientador(CPF, ID de
-                        autor privativa da instituição ou passaporte).</hint>
+                    <hint>&lt;font color="#449d44"&gt;CAMPO OPCIONAL: &lt;/font&gt; Informe o
+                        identificador único do orientador(CPF, ID de autor privativa da instituição
+                        ou passaporte).</hint>
                     <required></required>
                 </field>
             </row>
@@ -404,8 +408,10 @@
                     <label>Primeiro coorientador:</label>
                     <type-bind>Tese, Dissertação, Trabalho de Conclusão de Curso</type-bind>
                     <input-type>name</input-type>
-                    <hint>CAMPO OPCIONAL: Informe o nome do primeiro coorientador, conforme o
-                        formato de citação.</hint>
+                    <hint>&lt;div class="alert alert-info"&gt;Se houver, descrição do
+                        &lt;strong&gt;PRIMEIRO CO-ORIENTADOR&lt;/strong&gt; &lt;/div&gt; &lt;font
+                        color="#449d44"&gt;CAMPO OPCIONAL: &lt;/font&gt; Informe o nome do primeiro
+                        coorientador, conforme o formato de citação.</hint>
                     <required></required>
                 </field>
             </row>
@@ -863,8 +869,7 @@
                     <input-type>onebox</input-type>
                     <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Informe o número
                         de edição do evento.</hint>
-                    <required>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Informe o
-                        número de edição do evento.</required>
+                    <required>CAMPO OBRIGATÓRIO: Informe o número de edição do evento.</required>
                 </field>
             </row>
 
@@ -943,19 +948,158 @@
                 </field>
             </row>
 
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>publisher</dc-element>
+                    <dc-qualifier></dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Nome da instituição por extenso:</label>
+                    <input-type value-pairs-name="common_ies">dropdown</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Nome da
+                        instituição por extenso.</hint>
+                    <required>CAMPO OBRIGATÓRIO: Nome da instituição por extenso.</required>
+                </field>
+            </row>
+
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>publisher</dc-element>
+                    <dc-qualifier>initials</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Sigla da instituição:</label>
+                    <input-type value-pairs-name="common_sigla_ies">dropdown</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt;Sigla da
+                        instituição.</hint>
+                    <required>CAMPO OBRIGATÓRIO: Sigla da instituição.</required>
+                </field>
+            </row>
+
+
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>publisher</dc-element>
+                    <dc-qualifier>department</dc-qualifier>
+                    <repeatable>true</repeatable>
+                    <label>Faculdade, Instituto ou Departamento:</label>
+                    <type-bind>Tese, Dissertação, Trabalho de Conclusão de Curso</type-bind>
+                    <input-type value-pairs-name="common_department">dropdown</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Nome, por
+                        extenso, da unidade acadêmica: faculdade, escola, instituto, departamento ou
+                        estrutura equivalente.</hint>
+                    <required>CAMPO OBRIGATÓRIO: Nome, por extenso, da unidade acadêmica: faculdade,
+                        escola, instituto, departamento ou estrutura equivalente.</required>
+                </field>
+            </row>
+
+
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>publisher</dc-element>
+                    <dc-qualifier>program</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Nome do programa de pós-graduação por extenso:</label>
+                    <type-bind>Tese, Dissertação</type-bind>
+                    <input-type value-pairs-name="common_program">dropdown</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Nome(s) do(s)
+                        programa(s) de pós-graduação por extenso.</hint>
+                    <required>CAMPO OBRIGATÓRIO: Nome(s) do(s) programa(s) de pós-graduação por
+                        extenso.</required>
+                </field>
+            </row>
+
+
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>publisher</dc-element>
+                    <dc-qualifier>country</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>País:</label>
+                    <input-type value-pairs-name="common_publisher_country">dropdown</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Informe o país.</hint>
+                    <required>CAMPO OBRIGATÓRIO: Informe o país.</required>
+                </field>
+            </row>
+
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>language</dc-element>
+                    <dc-qualifier></dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Idioma:</label>
+                    <input-type value-pairs-name="common_languages">dropdown</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Informe o idioma
+                        em que o documento está escrito.</hint>
+                    <required>CAMPO OBRIGATÓRIO: Informe o idioma em que o documento está escrito.</required>
+                </field>
+            </row>
+
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>relation</dc-element>
+                    <dc-qualifier>references</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Referências:</label>
+                    <type-bind>Tese, Dissertação, Trabalho de Conclusão de Curso</type-bind>
+                    <input-type>textarea</input-type>
+                    <hint>&lt;font color="#449d44"&gt;CAMPO OPCIONAL: &lt;/font&gt; Informes as
+                        referências citadas no documento. </hint>
+                    <required></required>
+                </field>
+            </row>
+
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>identifier</dc-element>
+                    <dc-qualifier></dc-qualifier>
+                    <repeatable>true</repeatable>
+                    <label>Identificadores</label>
+                    <input-type value-pairs-name="common_identifiers">qualdrop_value</input-type>
+                    <hint>&lt;font color="#449d44"&gt;CAMPO OPCIONAL: &lt;/font&gt; Preencha com as
+                        informações do identificador persistente utilizado.</hint>
+                    <required></required>
+                </field>
+            </row>
+
 
             <row>
                 <field>
                     <dc-schema>dc</dc-schema>
                     <dc-element>subject</dc-element>
                     <dc-qualifier></dc-qualifier>
-                    <!-- An input-type of tag MUST be marked as repeatable -->
                     <repeatable>true</repeatable>
-                    <label>Subject Keywords</label>
+                    <label>Palavras-chave:</label>
                     <input-type>tag</input-type>
-                    <hint>Enter appropriate subject keywords or phrases.</hint>
-                    <required></required>
-                    <vocabulary>srsc</vocabulary>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Informe as
+                        palavras-chave do documento descrito. Sugere-se também o uso de termos em
+                        inglês.</hint>
+                    <required>CAMPO OBRIGATÓRIO: Informe as palavras-chave do documento descrito.
+                        Sugere-se também o uso de termos em inglês.</required>
+                    <!-- <vocabulary>srsc</vocabulary> -->
+                </field>
+            </row>
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>subject</dc-element>
+                    <dc-qualifier>cnpq</dc-qualifier>
+                    <repeatable>true</repeatable>
+                    <label>Áreas de conhecimento de acordo com tabela do CNPq:</label>
+                    <input-type>textarea</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt;Selecione a(s)
+                        área(s) de conhecimento correspondente(s), de acordo com tabela do CNPq.</hint>
+                    <required>CAMPO OBRIGATÓRIO: Selecione a(s) área(s) de conhecimento
+                        correspondente(s), de acordo com tabela do CNPq.</required>
+                    <!-- Vocabulário decrito no arquivo cnpq.xml: 
+     https://github.com/ibict-br/TEDE/blob/dspace-4_x/dspace/config/controlled-vocabularies/cnpq.xml -->
+                    <vocabulary>cnpq</vocabulary>
                 </field>
             </row>
             <row>
@@ -2077,6 +2221,19 @@
     </form-definitions>
 
     <form-value-pairs>
+        <value-pairs value-pairs-name="common_ies" dc-term="publisher">
+            <pair>
+                <displayed-value>Faculdade de Direito de Vitoria</displayed-value>
+                <stored-value>Faculdade de Direito de Vitoria</stored-value>
+            </pair>
+        </value-pairs>
+
+        <value-pairs value-pairs-name="common_sigla_ies" dc-term="initials">
+            <pair>
+                <displayed-value>FDV</displayed-value>
+                <stored-value>FDV</stored-value>
+            </pair>
+        </value-pairs>
         <value-pairs value-pairs-name="common_rights" dc-term="rights">
             <pair>
                 <displayed-value>Acesso Aberto</displayed-value>
@@ -2092,22 +2249,41 @@
             </pair>
         </value-pairs>
 
+        <value-pairs value-pairs-name="common_department" dc-term="department">
+            <pair>
+                <displayed-value>Departamento 1</displayed-value>
+                <stored-value>Departamento 1</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Departamento 2</displayed-value>
+                <stored-value>Departamento 2</stored-value>
+            </pair>
+        </value-pairs>
+
+
+        <value-pairs value-pairs-name="common_program" dc-term="program">
+            <pair>
+                <displayed-value>PPG1</displayed-value>
+                <stored-value>PPG1</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>PPG2</displayed-value>
+                <stored-value>PPG2</stored-value>
+            </pair>
+        </value-pairs>
+
         <value-pairs value-pairs-name="common_identifiers" dc-term="identifier">
             <pair>
                 <displayed-value>ISSN</displayed-value>
                 <stored-value>issn</stored-value>
             </pair>
             <pair>
-                <displayed-value>Other</displayed-value>
-                <stored-value>other</stored-value>
+                <displayed-value>DOI</displayed-value>
+                <stored-value>doi</stored-value>
             </pair>
             <pair>
                 <displayed-value>ISMN</displayed-value>
                 <stored-value>ismn</stored-value>
-            </pair>
-            <pair>
-                <displayed-value>Gov't Doc #</displayed-value>
-                <stored-value>govdoc</stored-value>
             </pair>
             <pair>
                 <displayed-value>URI</displayed-value>
@@ -2118,6 +2294,42 @@
                 <stored-value>isbn</stored-value>
             </pair>
         </value-pairs>
+
+        <value-pairs value-pairs-name="common_languages" dc-term="language">
+            <pair>
+                <displayed-value>Português</displayed-value>
+                <stored-value>por</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Inglês</displayed-value>
+                <stored-value>eng</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Francês</displayed-value>
+                <stored-value>fra</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Espanhol</displayed-value>
+                <stored-value>spa</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Alemão</displayed-value>
+                <stored-value>deu</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Catalão</displayed-value>
+                <stored-value>cat</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Holandês</displayed-value>
+                <stored-value>nld</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Italiano</displayed-value>
+                <stored-value>ita</stored-value>
+            </pair>
+        </value-pairs>
+
 
         <value-pairs value-pairs-name="common_types" dc-term="type">
             <pair>
@@ -2157,6 +2369,103 @@
                 <stored-value>Outro</stored-value>
             </pair>
         </value-pairs>
+
+        <value-pairs value-pairs-name="common_publisher_country" dc-term="publisher_country">
+            <pair>
+                <displayed-value>Brasil</displayed-value>
+                <stored-value>Brasil</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>África do Sul</displayed-value>
+                <stored-value>Africa do Sul</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Alemanha</displayed-value>
+                <stored-value>Alemanha</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Angola</displayed-value>
+                <stored-value>Angola</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Argentina</displayed-value>
+                <stored-value>Argentina</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Austrália</displayed-value>
+                <stored-value>Austrália</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Áustria</displayed-value>
+                <stored-value>Austria</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Béligica</displayed-value>
+                <stored-value>Bélgica</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Bolívia</displayed-value>
+                <stored-value>Bolivia</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Canadá</displayed-value>
+                <stored-value>Canada</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Chile</displayed-value>
+                <stored-value>Chile</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>China</displayed-value>
+                <stored-value>China</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Colômbia</displayed-value>
+                <stored-value>Colombia</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Espanha</displayed-value>
+                <stored-value>Espanha</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Estados Unidos</displayed-value>
+                <stored-value>Estados unidos</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>França</displayed-value>
+                <stored-value>Franca</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Grã-Bretanha</displayed-value>
+                <stored-value>Gra-bretanha</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Holanda</displayed-value>
+                <stored-value>Holanda</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Itália</displayed-value>
+                <stored-value>Italia</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>México</displayed-value>
+                <stored-value>México</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Portugal</displayed-value>
+                <stored-value>Portugal</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Suíça</displayed-value>
+                <stored-value>Suica</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Uruguai</displayed-value>
+                <stored-value>Uruguai</stored-value>
+            </pair>
+
+        </value-pairs>
+
 
         <!-- default language order: (from dspace 1.2.1)
              "en_US", "en", "es", "de", "fr", "it", "ja", "zh", "other", ""
