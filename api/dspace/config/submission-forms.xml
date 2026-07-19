@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE input-forms SYSTEM "submission-forms.dtd">
 
-
 <input-forms>
-
     <form-definitions>
         <form name="bitstream-metadata">
             <row>
@@ -63,18 +61,96 @@
             </row>
             <row>
                 <field>
-                <dc-schema>dc</dc-schema>
-                <dc-element>title</dc-element>
-                <dc-qualifier>alternative</dc-qualifier>
-                <repeatable>true</repeatable>
-                <label>Título(s) alternativo(s):</label>
-                <input-type>onebox</input-type>
-                <hint>CAMPO OPCIONAL: Informe o título alternativo. Recomenda-se preencher com a tradução do título da tese ou dissertação para o inglês, para maior visibilidade do documento.</hint>
-                <required></required>
-            </field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>title</dc-element>
+                    <dc-qualifier>alternative</dc-qualifier>
+                    <repeatable>true</repeatable>
+                    <label>Título(s) alternativo(s):</label>
+                    <input-type>onebox</input-type>
+                    <hint>&lt;font color="#449d44"&gt;CAMPO OPCIONAL: &lt;/font&gt;Informe o título
+                        alternativo. Recomenda-se preencher com a tradução do título da tese ou
+                        dissertação para o inglês, para maior visibilidade do documento.</hint>
+                    <required></required>
+                </field>
             </row>
-            
+
             <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>rights</dc-element>
+                    <dc-qualifier></dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Permissão de acesso:</label>
+                    <input-type value-pairs-name="common_rights">dropdown</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Informe o tipo de
+                        acesso ao documento</hint>
+                    <required>CAMPO OBRIGATÓRIO: Informe o tipo de acesso ao documento</required>
+                </field>
+            </row>
+
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>date</dc-element>
+                    <dc-qualifier>available</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Data de liberação para acesso:</label>
+                    <input-type>date</input-type>
+                    <hint>Data de disponibilidade do registro. Esta pode ser diferente da
+                        disponibilização do texto completo, no caso dos embargos ou restrições de
+                        acesso ao documento completo.</hint>
+                    <required></required>
+                </field>
+            </row>
+
+            <row>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>date</dc-element>
+                    <dc-qualifier>available</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Data de liberação para acesso:</label>
+                    <style>col-md-6</style>
+                    <input-type>date</input-type>
+                    <hint>Data de disponibilidade do registro. Esta pode ser diferente da
+                        disponibilização do texto completo, no caso dos embargos ou restrições de
+                        acesso ao documento completo.</hint>
+                    <required></required>
+                </field>
+
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>date</dc-element>
+                    <dc-qualifier>issued</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Data da defesa:</label>
+                    <style>col-md-6</style>
+                    <type-bind>Tese, Dissertação, Trabalho de Conclusão de Curso</type-bind>
+                    <input-type>date</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Informe a data de
+                        defesa do documento descrito, ou seja, a data de defesa da tese ou
+                        dissertação. </hint>
+                    <required>CAMPO OBRIGATÓRIO: Informe a data de defesa do documento descrito, ou
+                        seja, a data de defesa da tese ou dissertação.</required>
+                </field>
+
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>date</dc-element>
+                    <dc-qualifier>issued</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Data da publicação:</label>
+                    <style>col-md-6</style>
+                    <type-bind>Artigo de Periódico, Artigo de Evento, Livro, Capítulo de Livro,
+                        Relatório de Pesquisa, Outro</type-bind>
+                    <input-type>date</input-type>
+                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Informe a data da
+                        publicação do documento descrito. </hint>
+                    <required>CAMPO OBRIGATÓRIO: Informe a data da publicação do documento descrito</required>
+                </field>
+            </row>
+
+            <!-- <row>
                 <field>
                     <dc-schema>dc</dc-schema>
                     <dc-element>contributor</dc-element>
@@ -144,7 +220,6 @@
                     <dc-schema>dc</dc-schema>
                     <dc-element>identifier</dc-element>
                     <dc-qualifier></dc-qualifier>
-                    <!-- An input-type of qualdrop_value MUST be marked as repeatable -->
                     <repeatable>true</repeatable>
                     <label>Identifiers</label>
                     <input-type value-pairs-name="common_identifiers">qualdrop_value</input-type>
@@ -168,7 +243,7 @@
                         select 'N/A'. </hint>
                     <required></required>
                 </field>
-            </row>
+            </row> -->
         </form>
 
         <form name="traditionalpagetwo">
@@ -1305,6 +1380,21 @@
     </form-definitions>
 
     <form-value-pairs>
+        <value-pairs value-pairs-name="common_rights" dc-term="rights">
+            <pair>
+                <displayed-value>Acesso Aberto</displayed-value>
+                <stored-value>Acesso Aberto</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Acesso Embargado</displayed-value>
+                <stored-value>Acesso Embargado</stored-value>
+            </pair>
+            <pair>
+                <displayed-value>Acesso Restrito</displayed-value>
+                <stored-value>Acesso Restrito</stored-value>
+            </pair>
+        </value-pairs>
+
         <value-pairs value-pairs-name="common_identifiers" dc-term="identifier">
             <pair>
                 <displayed-value>ISSN</displayed-value>
