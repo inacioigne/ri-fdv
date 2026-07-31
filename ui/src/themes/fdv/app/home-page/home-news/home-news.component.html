@@ -1,8 +1,7 @@
-<div class="home-news-content py-4 px-2 py-sm-5 px-sm-0 mt-ncs mb-4">
-  <div class="container">
-    <div class="d-flex justify-content-center">
-      <img alt=""
-      [src]="'assets/fdv/images/logo.gif'" />
-    </div>
+<div class="home-news-banner pb-4">
+  <img class="home-news-banner__image" alt="" [src]="'assets/fdv/images/banner.png'" />
+  <div class="container home-news-banner__overlay">
+    <ds-search-form [inPlaceSearch]="false" [searchPlaceholder]="'home.search-form.placeholder' | translate">
+    </ds-search-form>
   </div>
 </div>

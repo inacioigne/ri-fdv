@@ -16,9 +16,7 @@ import { ThemedNavbarComponent } from '../../../../app/navbar/themed-navbar.comp
 @Component({
   selector: 'ds-themed-header',
   styleUrls: ['header.component.scss'],
-  // styleUrls: ['../../../../app/header/header.component.scss'],
   templateUrl: 'header.component.html',
-  // templateUrl: '../../../../app/header/header.component.html',
   imports: [
     AsyncPipe,
     ContextHelpToggleComponent,
