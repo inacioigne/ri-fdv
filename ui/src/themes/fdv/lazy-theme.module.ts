@@ -87,7 +87,7 @@ import { HomePageComponent } from './app/home-page/home-page.component';
 // import { TypeBadgeComponent } from './app/shared/object-collection/shared/badges/type-badge/type-badge.component';
 // import { ItemDetailPreviewFieldComponent } from './app/shared/object-detail/my-dspace-result-detail-element/item-detail-preview/item-detail-preview-field/item-detail-preview-field.component';
 // import { ItemListPreviewComponent } from './app/shared/object-list/my-dspace-result-list-element/item-list-preview/item-list-preview.component';
-// import { ObjectListComponent } from './app/shared/object-list/object-list.component';
+import { ObjectListComponent } from './app/shared/object-list/object-list.component';
 // import { ResultsBackButtonComponent } from './app/shared/results-back-button/results-back-button.component';
 // import { SearchComponent } from './app/shared/search/search.component';
 // import { SearchFiltersComponent } from './app/shared/search/search-filters/search-filters.component';
@@ -161,7 +161,7 @@ const DECLARATIONS = [
   // AdminSidebarComponent,
   // SearchSettingsComponent,
   // ComcolPageBrowseByComponent,
-  // ObjectListComponent,
+  ObjectListComponent,
   // BrowseByMetadataComponent,
   // BrowseByDateComponent,
   // BrowseByTitleComponent,
