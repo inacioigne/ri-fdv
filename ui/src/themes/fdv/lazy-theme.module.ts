@@ -30,7 +30,7 @@ import { CollectionPageComponent } from './app/collection-page/collection-page.c
 // import { EditItemTemplatePageComponent } from './app/collection-page/edit-item-template-page/edit-item-template-page.component';
 // import { CommunityListComponent } from './app/community-list-page/community-list/community-list.component';
 // import { CommunityListPageComponent } from './app/community-list-page/community-list-page.component';
-// import { CommunityPageComponent } from './app/community-page/community-page.component';
+import { CommunityPageComponent } from './app/community-page/community-page.component';
 // import { CommunityPageSubCollectionListComponent } from './app/community-page/sections/sub-com-col-section/sub-collection-list/community-page-sub-collection-list.component';
 // import { CommunityPageSubCommunityListComponent } from './app/community-page/sections/sub-com-col-section/sub-community-list/community-page-sub-community-list.component';
 // import { DsoEditMetadataComponent } from './app/dso-shared/dso-edit-metadata/dso-edit-metadata.component';
@@ -129,7 +129,7 @@ const DECLARATIONS = [
   // CommunityStatisticsPageComponent,
   // ItemStatisticsPageComponent,
   // SiteStatisticsPageComponent,
-  // CommunityPageComponent,
+  CommunityPageComponent,
   // CommunityPageSubCommunityListComponent,
   // CommunityPageSubCollectionListComponent,
   CollectionPageComponent,
