@@ -26,7 +26,7 @@ import { SearchResultsSkeletonComponent } from '../../app/shared/search/search-r
 // import { BrowseByMetadataComponent } from './app/browse-by/browse-by-metadata/browse-by-metadata.component';
 // import { BrowseByTaxonomyComponent } from './app/browse-by/browse-by-taxonomy/browse-by-taxonomy.component';
 // import { BrowseByTitleComponent } from './app/browse-by/browse-by-title/browse-by-title.component';
-// import { CollectionPageComponent } from './app/collection-page/collection-page.component';
+import { CollectionPageComponent } from './app/collection-page/collection-page.component';
 // import { EditItemTemplatePageComponent } from './app/collection-page/edit-item-template-page/edit-item-template-page.component';
 // import { CommunityListComponent } from './app/community-list-page/community-list/community-list.component';
 // import { CommunityListPageComponent } from './app/community-list-page/community-list-page.component';
@@ -132,7 +132,7 @@ const DECLARATIONS = [
   // CommunityPageComponent,
   // CommunityPageSubCommunityListComponent,
   // CommunityPageSubCollectionListComponent,
-  // CollectionPageComponent,
+  CollectionPageComponent,
   // ItemPageComponent,
   // FullItemPageComponent,
   // LoginPageComponent,
