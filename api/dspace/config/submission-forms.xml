@@ -985,12 +985,12 @@
                     <repeatable>true</repeatable>
                     <label>Faculdade, Instituto ou Departamento:</label>
                     <type-bind>Tese, Dissertação, Trabalho de Conclusão de Curso</type-bind>
-                    <input-type value-pairs-name="common_department">dropdown</input-type>
+                    <!-- <input-type value-pairs-name="common_department">dropdown</input-type> -->
+                     <input-type>onebox</input-type>
                     <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Nome, por
                         extenso, da unidade acadêmica: faculdade, escola, instituto, departamento ou
                         estrutura equivalente.</hint>
-                    <required>CAMPO OBRIGATÓRIO: Nome, por extenso, da unidade acadêmica: faculdade,
-                        escola, instituto, departamento ou estrutura equivalente.</required>
+                    <required></required>
                 </field>
             </row>
 
@@ -1002,12 +1002,26 @@
                     <dc-qualifier>program</dc-qualifier>
                     <repeatable>false</repeatable>
                     <label>Nome do programa de pós-graduação por extenso:</label>
-                    <type-bind>Tese, Dissertação</type-bind>
-                    <input-type value-pairs-name="common_program">dropdown</input-type>
+                     <style>col-md-8</style>
+                    <type-bind>Tese, Dissertação</type-bind>                    
+                    <!-- <input-type value-pairs-name="common_program">dropdown</input-type> -->
+                     <input-type>onebox</input-type>
                     <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Nome(s) do(s)
                         programa(s) de pós-graduação por extenso.</hint>
                     <required>CAMPO OBRIGATÓRIO: Nome(s) do(s) programa(s) de pós-graduação por
                         extenso.</required>
+                </field>
+                <field>
+                    <dc-schema>dc</dc-schema>
+                    <dc-element>identifier</dc-element>
+                    <dc-qualifier>ppgcode</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Código do Programa de Pós-Graduação:</label>
+                    <style>col-md-4</style>
+                    <type-bind>Tese, Dissertação</type-bind>    
+                    <input-type>onebox</input-type>
+                    <hint>Código do Programa de Pós-Graduação</hint>
+                    <required></required>
                 </field>
             </row>
 
@@ -1138,7 +1152,8 @@
                     <repeatable>true</repeatable>
                     <label>Agência(s) de &lt;br&gt; fomento:</label>
                     <type-bind>Tese, Dissertação, Trabalho de Conclusão de Curso</type-bind>
-                    <input-type value-pairs-name="common_sporsorship">dropdown</input-type>
+                    <!-- <input-type value-pairs-name="common_sporsorship">dropdown</input-type> -->
+                     <input-type>onebox</input-type> 
                     <hint>&lt;font color="#449d44"&gt;CAMPO OPCIONAL: &lt;/font&gt; Agência(s) de
                         fomento que auxiliou(ram) o pesquisador.</hint>
                     <required></required>
