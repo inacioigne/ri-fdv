@@ -987,9 +987,7 @@
                     <type-bind>Tese, Dissertação, Trabalho de Conclusão de Curso</type-bind>
                     <!-- <input-type value-pairs-name="common_department">dropdown</input-type> -->
                      <input-type>onebox</input-type>
-                    <hint>&lt;font color="red"&gt;CAMPO OBRIGATÓRIO: &lt;/font&gt; Nome, por
-                        extenso, da unidade acadêmica: faculdade, escola, instituto, departamento ou
-                        estrutura equivalente.</hint>
+                    <hint>Nome, por extenso, da unidade acadêmica: faculdade, escola, instituto, departamento ou estrutura equivalente.</hint>
                     <required></required>
                 </field>
             </row>
