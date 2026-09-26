@@ -25,4 +25,5 @@ public interface SubscriptionGenerator<T> {
 
     void notifyForSubscriptions(Context c, EPerson ePerson, Map<Community, List<T>> comm,
                                 Map<Collection, List<T>> coll);
+
 }

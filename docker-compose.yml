@@ -42,11 +42,11 @@ services:
         while (!</dev/tcp/dspacedb/5432) > /dev/null 2>&1; do sleep 1; done;
         /dspace/bin/dspace database migrate
         java -jar /dspace/webapps/server-boot.jar --dspace.dir=/dspace
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/server/api/system/status || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+    # healthcheck:
+    #   test: ["CMD-SHELL", "curl -f http://localhost:8080/server/api/system/status || exit 1"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
     restart: unless-stopped
 
   dspacedb:
@@ -100,24 +100,26 @@ services:
     volumes:
       - solr_data:/var/solr/data
     entrypoint:
-      - /bin/bash
-      - '-c'
-      - |
-        init-var-solr
-        precreate-core authority /opt/solr/server/solr/configsets/authority
-        cp -r /opt/solr/server/solr/configsets/authority/* authority
-        precreate-core oai /opt/solr/server/solr/configsets/oai
-        cp -r /opt/solr/server/solr/configsets/oai/* oai
-        precreate-core search /opt/solr/server/solr/configsets/search
-        cp -r /opt/solr/server/solr/configsets/search/* search
-        precreate-core statistics /opt/solr/server/solr/configsets/statistics
-        cp -r /opt/solr/server/solr/configsets/statistics/* statistics
-        precreate-core qaevent /opt/solr/server/solr/configsets/qaevent
-        cp -r /opt/solr/server/solr/configsets/qaevent/* qaevent
-        precreate-core suggestion /opt/solr/server/solr/configsets/suggestion
-        cp -r /opt/solr/server/solr/configsets/suggestion/* suggestion
-        chown -R solr:solr /var/solr
-        runuser -u solr -- solr-foreground
+    - /bin/bash
+    - '-c'
+    - |
+      init-var-solr
+      precreate-core authority /opt/solr/server/solr/configsets/authority
+      cp -r /opt/solr/server/solr/configsets/authority/* authority
+      precreate-core oai /opt/solr/server/solr/configsets/oai
+      cp -r /opt/solr/server/solr/configsets/oai/* oai
+      precreate-core search /opt/solr/server/solr/configsets/search
+      cp -r /opt/solr/server/solr/configsets/search/* search
+      precreate-core statistics /opt/solr/server/solr/configsets/statistics
+      cp -r /opt/solr/server/solr/configsets/statistics/* statistics
+      precreate-core qaevent /opt/solr/server/solr/configsets/qaevent
+      cp -r /opt/solr/server/solr/configsets/qaevent/* qaevent
+      precreate-core suggestion /opt/solr/server/solr/configsets/suggestion
+      cp -r /opt/solr/server/solr/configsets/suggestion/* suggestion
+      precreate-core audit /opt/solr/server/solr/configsets/audit
+      cp -r /opt/solr/server/solr/configsets/audit/* audit
+      chown -R solr:solr /var/solr
+      runuser -u solr -- solr-foreground
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8983/solr || exit 1"]
       interval: 30s

@@ -4,7 +4,7 @@
     <groupId>org.dspace</groupId>
     <artifactId>dspace-parent</artifactId>
     <packaging>pom</packaging>
-    <version>9.3</version>
+    <version>10.1</version>
     <name>DSpace Parent Project</name>
     <description>
    	DSpace open source software is a turnkey institutional repository application.
@@ -18,41 +18,43 @@
 
     <properties>
         <!--=== GENERAL / DSPACE-API DEPENDENCIES ===-->
-        <java.version>17</java.version>
-        <spring.version>6.2.18</spring.version>
-        <spring-ldap.version>3.3.7</spring-ldap.version>
-        <spring-boot.version>3.5.14</spring-boot.version>
-        <spring-security.version>6.5.10</spring-security.version> <!-- sync with version used by spring-boot-->
+        <java.version>21</java.version>
+        <spring.version>6.2.19</spring.version>
+        <spring-ldap.version>3.3.8</spring-ldap.version>
+        <spring-boot.version>3.5.16</spring-boot.version>
+        <spring-security.version>6.5.11</spring-security.version> <!-- sync with version used by spring-boot-->
         <hibernate.version>6.4.10.Final</hibernate.version>
-        <hibernate-validator.version>8.0.3.Final</hibernate-validator.version>
-        <postgresql.driver.version>42.7.11</postgresql.driver.version>
+        <hibernate-validator.version>8.0.5.Final</hibernate-validator.version>
+        <!-- Pin antlr4-runtime to the version required by Hibernate (compiled with ANTLR tool 4.13.0) -->
+        <antlr4.version>4.13.0</antlr4.version>
+        <postgresql.driver.version>42.7.13</postgresql.driver.version>
         <flyway.version>10.22.0</flyway.version>
         <solr.client.version>8.11.4</solr.client.version>
 
         <ehcache.version>3.12.0</ehcache.version>
-        <errorprone.version>2.42.0</errorprone.version>
+        <errorprone.version>2.50.0</errorprone.version>
         <!-- NOTE: when updating jackson.version, also sync jackson-annotations.version below -->
-        <jackson.version>2.21.3</jackson.version>
-        <jackson-annotations.version>2.21</jackson-annotations.version>
+        <jackson.version>2.22.2</jackson.version>
+        <jackson-annotations.version>2.22</jackson-annotations.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
         <jaxb-api.version>4.0.5</jaxb-api.version>
-        <jaxb-runtime.version>4.0.8</jaxb-runtime.version>
+        <jaxb-runtime.version>4.0.9</jaxb-runtime.version>
         <jcache-version>1.1.1</jcache-version>
         <!-- NOTE: Jetty needed for Solr, Handle Server & tests -->
         <jetty.version>9.4.58.v20250814</jetty.version>
-        <log4j.version>2.25.4</log4j.version>
-        <pdfbox-version>3.0.6</pdfbox-version>
+        <log4j.version>2.26.1</log4j.version>
+        <pdfbox-version>3.0.8</pdfbox-version>
         <rome.version>1.19.0</rome.version>
         <!-- SLF4J is not used, but specified for dependency convergence issues between many dependencies -->
-        <slf4j.version>2.0.17</slf4j.version>
-        <tika.version>3.3.0</tika.version>
+        <slf4j.version>2.0.18</slf4j.version>
+        <tika.version>3.3.2</tika.version>
         <!-- Sync BouncyCastle & ASM with whatever version Tika uses -->
         <!-- WARNING: BouncyCastle is also required by the maven-gpg-plugin to sign code during release. Do not update
              unless the new BouncyCastle version is compatible both with tika-parsers and maven-gpg-plugin. -->
         <bouncycastle.version>1.81</bouncycastle.version>
-        <asm.version>8.0.1</asm.version>
+        <asm.version>9.10.1</asm.version>
         <!-- Jersey is used to integrate with external sources/services -->
-        <jersey.version>3.1.11</jersey.version>
+        <jersey.version>3.1.12</jersey.version>
         <!--=== SERVER WEBAPP DEPENDENCIES ===-->
         <!-- Library for reading JSON documents: https://github.com/json-path/JsonPath (used by Server webapp) -->
         <json-path.version>2.10.0</json-path.version>
@@ -95,7 +97,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.6.2</version>
+                    <version>3.6.3</version>
                     <executions>
                         <execution>
                             <id>enforce-java</id>
@@ -175,6 +177,8 @@
                             <arg>-XDcompilePolicy=simple</arg>
                             <arg>--should-stop=ifError=FLOW</arg>
                             <arg>-Xplugin:ErrorProne</arg>
+                            <!-- Required by Error Prone on JDK 21+: enables javac fix for JDK-8225377 -->
+                            <arg>-XDaddTypeAnnotationsToSymbol=true</arg>
                             <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
                             <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
                             <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
@@ -203,7 +207,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.5.0</version>
+                    <version>3.5.1</version>
                     <configuration>
                         <archive>
                             <manifest>
@@ -234,7 +238,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.5</version>
+                    <version>3.5.6</version>
                     <configuration>
                         <!-- Allow for the ability to pass JVM memory flags for Unit Tests. Since
                              maven-surefire-plugin forks a new JVM, it ignores MAVEN_OPTS.-->
@@ -261,7 +265,7 @@
                 <!-- Used to run Integration tests (when enabled by -DskipIntegrationTests=false) -->
                 <plugin>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.5.5</version>
+                    <version>3.5.6</version>
                     <configuration>
                         <!-- Allow for the ability to pass JVM memory flags for Unit Tests. Since
                              maven-failsafe-plugin forks a new JVM, it ignores MAVEN_OPTS.-->
@@ -329,7 +333,7 @@
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.9.8.3</version>
+                    <version>4.10.4.0</version>
                     <configuration>
                         <effort>Max</effort>
                         <threshold>Low</threshold>
@@ -339,7 +343,7 @@
                         <dependency>
                             <groupId>com.github.spotbugs</groupId>
                             <artifactId>spotbugs</artifactId>
-                            <version>4.9.8</version>
+                            <version>4.10.4</version>
                         </dependency>
                     </dependencies>
                     <executions>
@@ -374,7 +378,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.10.0</version>
+                    <version>3.11.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -391,7 +395,7 @@
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>0.10.0</version>
+                    <version>0.11.0</version>
                 </plugin>
                 <!-- Used to generate JavaDocs for new releases (see release profile). -->
                 <plugin>
@@ -431,7 +435,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.14</version>
+                    <version>0.8.15</version>
                 </plugin>
                 <!-- Freeze versions of the remaining compiler plugins for reproducible builds -->
                 <plugin>
@@ -442,7 +446,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.21.0</version>
+                    <version>3.22.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -537,7 +541,7 @@
                 </executions>
                 <configuration>
                     <validationSets>
-                        <!-- validate ALL XML and XSL files throughout the project (excluding target dirs) -->
+                        <!-- validate ALL XML and XSL files throughout the project (excluding target and dot dirs) -->
                         <validationSet>
                             <dir>${root.basedir}</dir>
                             <includes>
@@ -547,6 +551,7 @@
                             </includes>
                             <excludes>
                                 <exclude>**/target/**</exclude>
+                                <exclude>**/.*/**</exclude>
                             </excludes>
                         </validationSet>
                     </validationSets>
@@ -780,7 +785,7 @@
                                         <!-- JBoss Transaction API claims this license, but it is dual licensed with CDDL being one: https://github.com/jboss/jboss-transaction-api_spec -->
                                         <licenseMerge>Common Development and Distribution License (CDDL)|GNU General Public License, Version 2 with the Classpath Exception</licenseMerge>
                                         <licenseMerge>Eclipse Distribution License, Version 1.0|Eclipse Distribution License (EDL), Version 1.0|Eclipse Distribution License - v 1.0|Eclipse Distribution License v. 1.0|EDL 1.0</licenseMerge>
-                                        <licenseMerge>Eclipse Public License|Eclipse Public License - Version 1.0|Eclipse Public License - v 1.0|EPL 1.0 license|Eclipse Public License (EPL), Version 1.0|Eclipse Public License 1.0|Eclipse Public License v1.0|Eclipse Public License, Version 1.0|EPL 1.0|EPL 2.0|Eclipse Public License - v 2.0|EPL-2.0|Eclipse Public License 2.0|Eclipse Public License v. 2.0|Eclipse Public License, Version 2.0|Eclipse Public License v2.0</licenseMerge>
+                                        <licenseMerge>Eclipse Public License|Eclipse Public License - Version 1.0|Eclipse Public License - v 1.0|EPL 1.0 license|Eclipse Public License (EPL), Version 1.0|Eclipse Public License 1.0|Eclipse Public License v1.0|Eclipse Public License, Version 1.0|EPL 1.0|EPL 2.0|Eclipse Public License - v 2.0|EPL-2.0|Eclipse Public License 2.0|Eclipse Public License v. 2.0|Eclipse Public License, Version 2.0</licenseMerge>
                                         <!-- JUnit claims this license but is actually Eclipse Public License: http://junit.org/license.html -->
                                         <licenseMerge>Eclipse Public License|Common Public License Version 1.0</licenseMerge>
                                         <!-- Jersey is dual licensed as EPL but lists its main license as GPL: https://github.com/eclipse-ee4j/jersey#licensing-and-governance -->
@@ -1071,79 +1076,79 @@
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-api</artifactId>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-api</artifactId>
                 <type>test-jar</type>
-                <version>9.3</version>
+                <version>10.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.dspace.modules</groupId>
                 <artifactId>additions</artifactId>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.dspace.modules</groupId>
                 <artifactId>server</artifactId>
                 <classifier>classes</classifier>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
 
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-sword</artifactId>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-swordv2</artifactId>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-oai</artifactId>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-services</artifactId>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-server-webapp</artifactId>
                 <type>test-jar</type>
-                <version>9.3</version>
+                <version>10.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-rdf</artifactId>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-saml2</artifactId>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-iiif</artifactId>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-server-webapp</artifactId>
-                <version>9.3</version>
+                <version>10.1</version>
             </dependency>
             <!-- DSpace API Localization Packages -->
             <dependency>
                 <groupId>org.dspace</groupId>
                 <artifactId>dspace-api-lang</artifactId>
-                <version>[9.0.0,10.0.0)</version>
+                <version>[10.0.0,11.0.0)</version>
             </dependency>
 
             <!-- DSpace third Party Dependencies -->
@@ -1201,12 +1206,18 @@
                 <artifactId>jboss-logging</artifactId>
                 <version>3.5.0.Final</version>
             </dependency>
-
-            <!-- Hibernate & Solr disagree on the version of antlr. So, specify the latest version -->
+            <!--
+                Pin antlr4-runtime to the version required by Hibernate ORM 6.4.x.
+                Hibernate is compiled with ANTLR tool 4.13.0 (ATN serialized format v4),
+                but transitive dependencies (e.g. solr-core) pull in antlr4-runtime 4.5.1
+                which only understands ATN format v3, causing an InvalidClassException at
+                startup.  Declaring the version here ensures the Hibernate-compatible
+                runtime wins across all modules.
+            -->
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-runtime</artifactId>
-                <version>4.13.2</version>
+                <version>${antlr4.version}</version>
             </dependency>
 
             <!-- Rome is used for RSS / ATOM syndication feeds -->
@@ -1368,6 +1379,12 @@
                 <groupId>org.apache.solr</groupId>
                 <artifactId>solr-solrj</artifactId>
                 <version>${solr.client.version}</version>
+                <exclusions>
+                    <exclusion>  <!-- declare the exclusion here -->
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j-impl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.lucene</groupId>
@@ -1414,7 +1431,7 @@
             <dependency>
                 <groupId>com.healthmarketscience.jackcess</groupId>
                 <artifactId>jackcess</artifactId>
-                <version>4.0.10</version>
+                <version>4.0.11</version>
             </dependency>
             <!-- Tika and axiom-api (in dspace-swordv2) disagree on versions -->
             <dependency>
@@ -1569,17 +1586,17 @@
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.22.0</version>
+                <version>1.22.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
-                <version>4.5.0</version>
+                <version>4.6.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-configuration2</artifactId>
-                <version>2.15.0</version>
+                <version>2.15.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -1608,7 +1625,7 @@
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>1.3.6</version>
+                <version>1.4.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -1633,7 +1650,7 @@
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.10.1</version>
+                <version>1.11.0</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.activation</groupId>
@@ -1669,7 +1686,7 @@
             <dependency>
                 <groupId>jaxen</groupId>
                 <artifactId>jaxen</artifactId>
-                <version>2.0.1</version>
+                <version>2.0.6</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
@@ -1786,10 +1803,17 @@
                 <version>4.13.2</version>
                 <scope>test</scope>
             </dependency>
+            <!-- Mockito 5.x is required for Java 21 compatibility (mockito-inline is now merged into mockito-core) -->
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-inline</artifactId>
-                <version>3.12.4</version>
+                <artifactId>mockito-core</artifactId>
+                <version>5.23.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.27.7</version>
                 <scope>test</scope>
             </dependency>
             <!-- H2 is an in-memory database used for Unit/Integration tests -->
@@ -1804,20 +1828,6 @@
                 <artifactId>mockwebserver</artifactId>
                 <version>4.12.0</version>
                 <scope>test</scope>
-            </dependency>
-
-            <!-- Findbugs annotations -->
-            <dependency>
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>jsr305</artifactId>
-                <version>3.0.2</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>annotations</artifactId>
-                <version>3.0.1u2</version>
-                <scope>provided</scope>
             </dependency>
 
             <!-- Converge miscellaneous transitive dependencies. -->
@@ -1859,7 +1869,7 @@
             <dependency>
                 <groupId>xom</groupId>
                 <artifactId>xom</artifactId>
-                <version>1.4.1</version>
+                <version>1.4.6</version>
                 <exclusions>
                     <exclusion>
                         <groupId>xml-apis</groupId>
@@ -2001,7 +2011,7 @@
         <connection>scm:git:git@github.com:DSpace/DSpace.git</connection>
         <developerConnection>scm:git:git@github.com:DSpace/DSpace.git</developerConnection>
         <url>https://github.com/DSpace/DSpace</url>
-        <tag>dspace-9.3</tag>
+        <tag>dspace-10.1</tag>
     </scm>
 
     <repositories>

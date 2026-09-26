@@ -7,6 +7,8 @@
  */
 package org.dspace.content;
 
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.Logger;
 import org.dspace.app.util.AuthorizeUtil;
 import org.dspace.authorize.AuthorizeConfiguration;
@@ -57,6 +60,7 @@ import org.dspace.eperson.EPerson;
 import org.dspace.eperson.Group;
 import org.dspace.eperson.service.GroupService;
 import org.dspace.eperson.service.SubscribeService;
+import org.dspace.event.DetailType;
 import org.dspace.event.Event;
 import org.dspace.harvest.HarvestedCollection;
 import org.dspace.harvest.service.HarvestedCollectionService;
@@ -185,7 +189,7 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
         }
 
         context.addEvent(new Event(Event.CREATE, Constants.COLLECTION,
-                newCollection.getID(), newCollection.getHandle(),
+                newCollection.getID(), newCollection.getHandle(), DetailType.HANDLE,
                 getIdentifiers(context, newCollection)));
 
         log.info(LogHelper.getHeader(context, "create_collection",
@@ -417,7 +421,7 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
             log.error(LogHelper.getHeader(context, "setWorkflowGroup",
                     "collection_id=" + collection.getID() + " " + e.getMessage()), e);
         }
-        if (!StringUtils.equals(workflowFactory.getDefaultWorkflow().getID(), workflow.getID())) {
+        if (!Strings.CS.equals(workflowFactory.getDefaultWorkflow().getID(), workflow.getID())) {
             throw new IllegalArgumentException(
                     "setWorkflowGroup can be used only on collection with the default basic dspace workflow. "
                     + "Instead, the collection: "
@@ -621,7 +625,8 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
         }
 
         context.addEvent(new Event(Event.MODIFY, Constants.COLLECTION,
-                                   collection.getID(), "remove_template_item", getIdentifiers(context, collection)));
+            collection.getID(), "remove_template_item", DetailType.ACTION,
+            getIdentifiers(context, collection)));
     }
 
     @Override
@@ -640,8 +645,8 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
         }
 
         context.addEvent(new Event(Event.ADD, Constants.COLLECTION, collection.getID(),
-                                   Constants.ITEM, item.getID(), item.getHandle(),
-                                   getIdentifiers(context, collection)));
+                Constants.ITEM, item.getID(), item.getHandle(), DetailType.HANDLE,
+                getIdentifiers(context, collection)));
     }
 
     @Override
@@ -661,8 +666,9 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
         }
 
         context.addEvent(new Event(Event.REMOVE, Constants.COLLECTION,
-                                   collection.getID(), Constants.ITEM, item.getID(), item.getHandle(),
-                                   getIdentifiers(context, collection)));
+            collection.getID(), Constants.ITEM, item.getID(),
+            item.getHandle(), DetailType.HANDLE,
+            getIdentifiers(context, collection)));
     }
 
     @Override
@@ -683,7 +689,8 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
         }
         if (collection.isMetadataModified()) {
             context.addEvent(new Event(Event.MODIFY_METADATA, Constants.COLLECTION, collection.getID(),
-                                         collection.getDetails(),getIdentifiers(context, collection)));
+                collection.getMetadataEventDetails(), DetailType.DSO_SUMMARY,
+                getIdentifiers(context, collection)));
             collection.clearModified();
         }
         collection.clearDetails();
@@ -740,7 +747,8 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
         }
 
         context.addEvent(new Event(Event.DELETE, Constants.COLLECTION,
-                                   collection.getID(), collection.getHandle(), getIdentifiers(context, collection)));
+            collection.getID(), collection.getHandle(), DetailType.HANDLE,
+            getIdentifiers(context, collection)));
 
         // remove subscriptions - hmm, should this be in Subscription.java?
         subscribeService.deleteByDspaceObject(context, collection);
@@ -1059,6 +1067,16 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
         return (int)resp.getTotalSearchResults();
     }
 
+    @Override
+    public boolean isSharedWorkspace(Context context, Collection collection) {
+        return toBoolean(getMetadataFirstValue(collection, "dspace", "workspace", "shared", Item.ANY));
+    }
+
+    @Override
+    public String getEntityType(Collection collection) {
+        return getMetadataFirstValue(collection, new MetadataFieldName("dspace.entity.type"), Item.ANY);
+    }
+
     /**
      * Finds all Indexed Collections where the current user has submit rights. If the user is an Admin,
      * this is all Indexed Collections. Otherwise, it includes those collections where
@@ -1176,6 +1194,76 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
         return (int) resp.getTotalSearchResults();
     }
 
+
+    @Override
+    public Collection retrieveCollectionByEntityType(Context context, Item item, String entityType)
+        throws SQLException {
+        Collection ownCollection = item.getOwningCollection();
+        return retrieveCollectionByEntityType(context, ownCollection.getCommunities(), entityType);
+    }
+
+    private Collection retrieveCollectionByEntityType(Context context, List<Community> communities, String entityType) {
+
+        for (Community community : communities) {
+            Collection collection = retriveCollectionByEntityType(context, community, entityType);
+            if (collection != null) {
+                return collection;
+            }
+        }
+
+        for (Community community : communities) {
+            List<Community> parentCommunities = community.getParentCommunities();
+            Collection collection = retrieveCollectionByEntityType(context, parentCommunities, entityType);
+            if (collection != null) {
+                return collection;
+            }
+        }
+
+        return retriveCollectionByEntityType(context, null, entityType);
+    }
+
+    private Collection retriveCollectionByEntityType(Context context, Community community, String entityType) {
+        context.turnOffAuthorisationSystem();
+        List<Collection> collections;
+        try {
+            collections = findCollectionsWithSubmit(context, null, community, entityType, 0, 1);
+        } catch (SearchServiceException e) {
+            throw new RuntimeException(e);
+        }
+        context.restoreAuthSystemState();
+        if (collections != null && collections.size() > 0) {
+            return collections.get(0);
+        }
+        if (community != null) {
+            for (Community subCommunity : community.getSubcommunities()) {
+                Collection collection = retriveCollectionByEntityType(context, subCommunity, entityType);
+                if (collection != null) {
+                    return collection;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public List<Collection> findAllCollectionsByEntityType(Context context, String entityType)
+        throws SearchServiceException {
+        List<Collection> collectionList = new ArrayList<>();
+
+        DiscoverQuery discoverQuery = new DiscoverQuery();
+        discoverQuery.setDSpaceObjectFilter(IndexableCollection.TYPE);
+        discoverQuery.addFilterQueries("dspace.entity.type:" + entityType);
+
+        DiscoverResult discoverResult = searchService.search(context, discoverQuery);
+        List<IndexableObject> solrIndexableObjects = discoverResult.getIndexableObjects();
+
+        for (IndexableObject solrCollection : solrIndexableObjects) {
+            Collection c = ((IndexableCollection) solrCollection).getIndexedObject();
+            collectionList.add(c);
+        }
+        return collectionList;
+    }
     /**
      * Returns total collection archived items
      *

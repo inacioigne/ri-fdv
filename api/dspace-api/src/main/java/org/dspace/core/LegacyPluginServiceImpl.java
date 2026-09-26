@@ -193,7 +193,7 @@ public class LegacyPluginServiceImpl implements PluginService {
             classname = sequenceConfig.get(iname);
         }
 
-        Object result[] = (Object[]) Array.newInstance(interfaceClass, classname.length);
+        Object[] result = (Object[]) Array.newInstance(interfaceClass, classname.length);
         for (int i = 0; i < classname.length; ++i) {
             log.debug("Adding Sequence plugin for interface= " + iname + ", class=" + classname[i]);
             result[i] = getAnonymousPlugin(classname[i]);
@@ -278,7 +278,7 @@ public class LegacyPluginServiceImpl implements PluginService {
                 for (String classname : selfNamedVals) {
                     try {
                         Class pluginClass = Class.forName(classname, true, loader);
-                        String names[] = (String[]) pluginClass.getMethod("getPluginNames").
+                        String[] names = (String[]) pluginClass.getMethod("getPluginNames").
                             invoke(null);
                         if (names == null || names.length == 0) {
                             log.error(
@@ -303,7 +303,7 @@ public class LegacyPluginServiceImpl implements PluginService {
     }
 
     // add info for a named plugin to cache, under all its names.
-    private int installNamedConfigs(String iname, String classname, String names[])
+    private int installNamedConfigs(String iname, String classname, String[] names)
         throws ClassNotFoundException {
         int found = 0;
         for (int i = 0; i < names.length; ++i) {

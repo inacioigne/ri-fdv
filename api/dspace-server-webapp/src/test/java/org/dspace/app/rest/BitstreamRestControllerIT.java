@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.Period;
 import java.util.Map;
@@ -60,7 +61,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -85,10 +86,13 @@ import org.dspace.content.BitstreamFormat;
 import org.dspace.content.Collection;
 import org.dspace.content.Community;
 import org.dspace.content.Item;
+import org.dspace.content.authority.service.ChoiceAuthorityService;
+import org.dspace.content.authority.service.MetadataAuthorityService;
 import org.dspace.content.service.BitstreamFormatService;
 import org.dspace.content.service.BitstreamService;
 import org.dspace.content.service.CollectionService;
 import org.dspace.core.Constants;
+import org.dspace.core.service.PluginService;
 import org.dspace.disseminate.CitationDocumentServiceImpl;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.Group;
@@ -142,7 +146,13 @@ public class BitstreamRestControllerIT extends AbstractControllerIntegrationTest
     private RequestItemService requestItemService;
 
     @Autowired
-    private WorkflowItemItemLinkRepository item;
+    private PluginService pluginService;
+
+    @Autowired
+    private ChoiceAuthorityService choiceAuthorityService;
+
+    @Autowired
+    private MetadataAuthorityService metadataAuthorityService;
 
     @Autowired
     private ObjectMapper mapper;
@@ -155,6 +165,8 @@ public class BitstreamRestControllerIT extends AbstractControllerIntegrationTest
     private BitstreamFormat supportedFormat;
     private BitstreamFormat knownFormat;
     private BitstreamFormat unknownFormat;
+    @Autowired
+    private WorkflowItemItemLinkRepository item;
 
     @BeforeClass
     public static void clearStatistics() throws Exception {
@@ -995,7 +1007,7 @@ public class BitstreamRestControllerIT extends AbstractControllerIntegrationTest
             // The citation cover page contains the item title.
             // We will now verify that the pdf text contains this title.
             String pdfText = extractPDFText(content);
-            assertTrue(StringUtils.contains(pdfText,"Public item citation cover page test 1"));
+            assertTrue(Strings.CS.contains(pdfText,"Public item citation cover page test 1"));
 
             // The dspace-api/src/test/data/dspaceFolder/assetstore/ConstitutionofIreland.pdf file contains 64 pages,
             // manually counted + 1 citation cover page
@@ -1544,6 +1556,108 @@ public class BitstreamRestControllerIT extends AbstractControllerIntegrationTest
         }
     }
 
+    /**
+     * Build a restricted Bitstream readable only by a group to which the test users do not belong.
+     *
+     * @return restricted Bitstream
+     * @throws Exception if the test object cannot be created
+     */
+    private Bitstream createRestrictedBitstream() throws Exception {
+        context.turnOffAuthorisationSystem();
+        try {
+            parentCommunity = CommunityBuilder.createCommunity(context)
+                                              .withName("Parent Community")
+                                              .build();
+            Collection col1 = CollectionBuilder.createCollection(context, parentCommunity)
+                                               .withName("Collection 1")
+                                               .build();
+            Group restrictedGroup = GroupBuilder.createGroup(context)
+                                                .withName("Restricted Group")
+                                                .build();
+
+            try (InputStream is = IOUtils.toInputStream("Secret file contents", StandardCharsets.UTF_8)) {
+                Item item = ItemBuilder.createItem(context, col1)
+                                       .withTitle("item 1")
+                                       .withIssueDate("2013-01-17")
+                                       .withAuthor("Doe, John")
+                                       .build();
+                return BitstreamBuilder.createBitstream(context, item, is)
+                                       .withName("secret.txt")
+                                       .withDescription("This bitstream is restricted")
+                                       .withMimeType("text/plain")
+                                       .withReaderGroup(restrictedGroup)
+                                       .build();
+            }
+        } finally {
+            context.restoreAuthSystemState();
+        }
+    }
+
+    /**
+     * A supplied access token must be validated before GET or HEAD can reach the Bitstream response handling.
+     */
+    @Test
+    public void restrictedBitstreamHeadWithUnvalidatedAccessTokenTest() throws Exception {
+        Bitstream restrictedBitstream = createRestrictedBitstream();
+        String contentUrl = "/api/core/bitstreams/" + restrictedBitstream.getID() + "/content";
+
+        // Baseline: without an access token, anonymous is refused on both GET and HEAD.
+        getClient().perform(get(contentUrl)).andExpect(status().isUnauthorized());
+        getClient().perform(head(contentUrl)).andExpect(status().isUnauthorized());
+
+        // A bogus token must be rejected, not merely present.
+        getClient().perform(head(contentUrl).param("accessToken", "invalid_token"))
+                   .andExpect(status().isUnauthorized());
+        getClient().perform(get(contentUrl).param("accessToken", "invalid_token"))
+                   .andExpect(status().isUnauthorized());
+
+        // A blank token must go through the normal Bitstream READ permission check.
+        getClient().perform(head(contentUrl).param("accessToken", ""))
+                   .andExpect(status().isUnauthorized());
+        getClient().perform(get(contentUrl).param("accessToken", ""))
+                   .andExpect(status().isUnauthorized());
+    }
+
+    /**
+     * Access-token authorization must not be available when Request-a-Copy is disabled.
+     */
+    @Test
+    public void restrictedBitstreamHeadWithAccessTokenRequestACopyDisabledTest() throws Exception {
+        configurationService.setProperty("request.item.type", null);
+
+        Bitstream restrictedBitstream = createRestrictedBitstream();
+        String contentUrl = "/api/core/bitstreams/" + restrictedBitstream.getID() + "/content";
+
+        getClient().perform(head(contentUrl)).andExpect(status().isUnauthorized());
+        getClient().perform(head(contentUrl).param("accessToken", "x"))
+                   .andExpect(status().isUnauthorized());
+        getClient().perform(get(contentUrl).param("accessToken", "x"))
+                   .andExpect(status().isUnauthorized());
+        getClient().perform(head(contentUrl).param("accessToken", ""))
+                   .andExpect(status().isUnauthorized());
+        getClient().perform(get(contentUrl).param("accessToken", ""))
+                   .andExpect(status().isUnauthorized());
+    }
+
+    /**
+     * Invalid token responses must not reveal whether a Bitstream UUID exists.
+     */
+    @Test
+    public void unknownBitstreamWithAccessTokenIsNotAnExistenceOracleTest() throws Exception {
+        Bitstream restrictedBitstream = createRestrictedBitstream();
+
+        String restrictedUrl = "/api/core/bitstreams/" + restrictedBitstream.getID() + "/content";
+        String unknownUrl = "/api/core/bitstreams/" + UUID.randomUUID() + "/content";
+
+        int restrictedStatus = getClient().perform(head(restrictedUrl).param("accessToken", "invalid_token"))
+                                          .andReturn().getResponse().getStatus();
+        int unknownStatus = getClient().perform(head(unknownUrl).param("accessToken", "invalid_token"))
+                                       .andReturn().getResponse().getStatus();
+
+        assertEquals("An unauthorized caller must not be able to tell an existing restricted Bitstream apart "
+                         + "from a nonexistent one", restrictedStatus, unknownStatus);
+    }
+
     @Test
     public void restrictedBitstreamWithAccessTokenTest() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -1642,6 +1756,107 @@ public class BitstreamRestControllerIT extends AbstractControllerIntegrationTest
 
         // Cleanup created request
         RequestItemBuilder.deleteRequestItem(foundRequest.getToken());
+    }
+
+    @Test
+    public void testEmbargoedBitstreamWithCrisSecurity() throws Exception {
+        choiceAuthorityService.getChoiceAuthoritiesNames();
+        configurationService.setProperty("plugin.named.org.dspace.content.authority.ChoiceAuthority",
+                                         new String[] {
+                                             "org.dspace.content.authority.ItemAuthority = AuthorAuthority"
+                                         });
+        configurationService.setProperty("cris.ItemAuthority.AuthorAuthority.entityType", "Person");
+        configurationService.setProperty("choices.plugin.dc.contributor.author", "AuthorAuthority");
+        configurationService.setProperty("choices.presentation.dc.contributor.author", "suggest");
+        configurationService.setProperty("authority.controlled.dc.contributor.author", "true");
+        configurationService.setProperty("core.authorization.bitstream.author.bypass-restrictions", "true");
+        pluginService.clearNamedPluginClasses();
+        choiceAuthorityService.clearCache();
+        metadataAuthorityService.clearCache();
+
+        context.turnOffAuthorisationSystem();
+
+        //** GIVEN **
+        //1. A community-collection structure with one parent community and one collections.
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
+        // this should be a publication collection but right now no control are enforced
+        Collection col1 = CollectionBuilder.createCollection(context, parentCommunity)
+                                           .withName("Collection 1").build();
+        // this should be a person collection
+        Collection col2 = CollectionBuilder.createCollection(context, parentCommunity)
+                                           .withName("Person").build();
+
+        //2. A public item with an embargoed bitstream
+        String bitstreamContent = "Embargoed!";
+        EPerson authorEp = EPersonBuilder.createEPerson(context)
+                                         .withEmail("author@example.com")
+                                         .withPassword(password)
+                                         .build();
+        Item profile = ItemBuilder.createItem(context, col2)
+                                  .withTitle("Author")
+                                  .withDspaceObjectOwner(authorEp)
+                                  .build();
+        // set our submitter
+        EPerson submitter = EPersonBuilder.createEPerson(context)
+                                          .withEmail("submitter@example.com")
+                                          .withPassword(password)
+                                          .build();
+        context.setCurrentUser(submitter);
+        try (InputStream is = IOUtils.toInputStream(bitstreamContent, CharEncoding.UTF_8)) {
+            // we need a publication to check our cris enhanced security
+            Item publicItem1 =
+                ItemBuilder.createItem(context, col1)
+                           .withEntityType("Publication")
+                           .withTitle("Public item 1")
+                           .withIssueDate("2017-10-17")
+                           .withAuthor("Just an author without profile")
+                           .withAuthor("A profile not longer in the system",
+                                       UUID.randomUUID().toString())
+                           .withAuthor("An author with invalid authority",
+                                       "this is not an uuid")
+                           .withAuthor("Author",
+                                       profile.getID().toString())
+                           .build();
+
+            bitstream = BitstreamBuilder
+                .createBitstream(context, publicItem1, is)
+                .withName("Test Embargoed Bitstream")
+                .withDescription("This bitstream is embargoed")
+                .withMimeType("text/plain")
+                .withEmbargoPeriod(Period.ofMonths(6))
+                .build();
+        }
+        context.restoreAuthSystemState();
+
+        //** WHEN **
+        //anonymous try to download the bitstream
+        getClient()
+            .perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+            // ** THEN **
+            .andExpect(status().isUnauthorized());
+
+        // another unrelated eperson should get forbidden
+        getClient(getAuthToken(eperson.getEmail(), password))
+            .perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+            // ** THEN **
+            .andExpect(status().isForbidden());
+
+        // the submitter should be able to download according to our custom cris policy
+        getClient(getAuthToken(submitter.getEmail(), password))
+            .perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+            // ** THEN **
+            .andExpect(status().isOk());
+
+        // the author should be able to download according to our custom cris policy
+        getClient(getAuthToken(authorEp.getEmail(), password))
+            .perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+            // ** THEN **
+            .andExpect(status().isOk());
+
+        // unauthorized request should not log statistics so we have only 2 successful visits
+        checkNumberOfStatsRecords(bitstream, 2);
     }
 
     @Test

@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.partitioningBy;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -69,15 +69,15 @@ public class ContentGenerator implements SubscriptionGenerator<IndexableObject> 
     private static final int MAX_METADATA_VALUES = 3;
     private static final String NEW_ITEMS_LABEL_KEY = "org.dspace.subscriptions.ContentGenerator.new-items-label";
     private static final String MODIFIED_ITEMS_LABEL_KEY =
-        "org.dspace.subscriptions.ContentGenerator.modified-items-label";
+            "org.dspace.subscriptions.ContentGenerator.modified-items-label";
     private static final String INTRO_NEW_AND_MODIFIED_KEY =
-        "org.dspace.subscriptions.ContentGenerator.intro.new-and-modified";
+            "org.dspace.subscriptions.ContentGenerator.intro.new-and-modified";
     private static final String INTRO_NEW_KEY = "org.dspace.subscriptions.ContentGenerator.intro.new";
     private static final String INTRO_MODIFIED_KEY = "org.dspace.subscriptions.ContentGenerator.intro.modified";
     private static final String COMMUNITY_NOTE_PREFIX_KEY =
-        "org.dspace.subscriptions.ContentGenerator.community-note-prefix";
+            "org.dspace.subscriptions.ContentGenerator.community-note-prefix";
     private static final String COMMUNITY_NOTE_SUFFIX_KEY =
-        "org.dspace.subscriptions.ContentGenerator.community-note-suffix";
+            "org.dspace.subscriptions.ContentGenerator.community-note-suffix";
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     private static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
@@ -107,22 +107,22 @@ public class ContentGenerator implements SubscriptionGenerator<IndexableObject> 
                 }
 
                 Map<Boolean, List<IndexableObject>> partitionedItems = allItems.stream()
-                    .filter(distinctByKey(IndexableObject::getID))
-                    .collect(partitioningBy(obj -> isNewItem((Item) obj.getIndexedObject())));
+                        .filter(distinctByKey(IndexableObject::getID))
+                        .collect(partitioningBy(obj -> isNewItem((Item) obj.getIndexedObject())));
 
                 Map<Collection, List<IndexableObject>> newItemsByCollection = partitionedItems.get(true).stream()
-                    .collect(groupingBy(obj -> ((Item) obj.getIndexedObject()).getOwningCollection()));
+                        .collect(groupingBy(obj -> ((Item) obj.getIndexedObject()).getOwningCollection()));
 
                 Map<Collection, List<IndexableObject>> modifiedItemsByCollection = partitionedItems.get(false).stream()
-                    .collect(groupingBy(obj -> ((Item) obj.getIndexedObject()).getOwningCollection()));
+                        .collect(groupingBy(obj -> ((Item) obj.getIndexedObject()).getOwningCollection()));
 
                 String intro = buildIntro(newItemsByCollection, modifiedItemsByCollection, supportedLocale);
                 String combinedSection = buildCombinedSection(newItemsByCollection, modifiedItemsByCollection,
-                    collectionToCommunityNameMap, supportedLocale);
+                        collectionToCommunityNameMap, supportedLocale);
 
                 if (combinedSection.equals(EMPTY)) {
                     log.debug("subscription(s) of eperson {} do(es) not match any new or modified items: " +
-                        "nothing to send - exit silently", ePerson::getID);
+                            "nothing to send - exit silently", ePerson::getID);
                     return;
                 }
                 email.addArgument(intro);
@@ -150,18 +150,18 @@ public class ContentGenerator implements SubscriptionGenerator<IndexableObject> 
 
     private boolean isNewItem(Item item) {
         Optional<ZonedDateTime> createdDate =
-            itemService.getMetadata(item, "dc", "date", "accessioned", Item.ANY)
-                .stream()
-                .map(MetadataValue::getValue)
-                .findFirst()
-                .map(val -> new DCDate(val).toDate().toInstant())
-                .map(instant -> ZonedDateTime.ofInstant(instant, ZoneOffset.UTC));
+                itemService.getMetadata(item, "dc", "date", "accessioned", Item.ANY)
+                           .stream()
+                           .map(MetadataValue::getValue)
+                           .findFirst()
+                           .map(val -> new DCDate(val).toDate().toInstant())
+                           .map(instant -> ZonedDateTime.ofInstant(instant, ZoneOffset.UTC));
 
         ZonedDateTime lastModified = ZonedDateTime.ofInstant(item.getLastModified(), ZoneOffset.UTC);
 
         return createdDate.map(createdZoned -> createdZoned.truncatedTo(ChronoUnit.SECONDS)
-                .equals(lastModified.truncatedTo(ChronoUnit.SECONDS)))
-            .orElse(false);
+                                                           .equals(lastModified.truncatedTo(ChronoUnit.SECONDS)))
+                          .orElse(false);
     }
 
     private String buildIntro(Map<Collection, List<IndexableObject>> newItems,
@@ -203,7 +203,7 @@ public class ContentGenerator implements SubscriptionGenerator<IndexableObject> 
             }
             if (modifiedItems != null && !modifiedItems.isEmpty()) {
                 sb.append(buildSectionHeader(I18nUtil.getMessage(MODIFIED_ITEMS_LABEL_KEY, locale),
-                    modifiedItems.size()));
+                        modifiedItems.size()));
                 sb.append(buildItemsBlock(modifiedItems));
             }
             sb.append(LINE_SEPARATOR);
@@ -217,8 +217,8 @@ public class ContentGenerator implements SubscriptionGenerator<IndexableObject> 
         String communityNote = "";
         if (collectionToCommunity != null && collectionToCommunity.containsKey(collection)) {
             communityNote = I18nUtil.getMessage(COMMUNITY_NOTE_PREFIX_KEY, locale)
-                + collectionToCommunity.get(collection)
-                + I18nUtil.getMessage(COMMUNITY_NOTE_SUFFIX_KEY, locale);
+                    + collectionToCommunity.get(collection)
+                    + I18nUtil.getMessage(COMMUNITY_NOTE_SUFFIX_KEY, locale);
         }
         String fullHeader = name + communityNote + ":" + LINE_SEPARATOR;
         String underline = "-".repeat(Math.max(0, name.length() + communityNote.length())) + LINE_SEPARATOR;
@@ -228,7 +228,7 @@ public class ContentGenerator implements SubscriptionGenerator<IndexableObject> 
     private String buildSectionHeader(String label, int count) {
         StringBuilder sb = new StringBuilder();
         sb.append("  ").append(label).append(" (").append(count).append("):")
-            .append(LINE_SEPARATOR).append(LINE_SEPARATOR);
+          .append(LINE_SEPARATOR).append(LINE_SEPARATOR);
         return sb.toString();
     }
 
@@ -265,13 +265,13 @@ public class ContentGenerator implements SubscriptionGenerator<IndexableObject> 
     private void addIfNotBlank(StringBuilder sb, String label, List<String> values) {
         if (values != null && !values.isEmpty()) {
             List<String> nonBlankValues = values.stream()
-                .filter(StringUtils::isNotBlank)
-                .collect(toList());
+                                                .filter(StringUtils::isNotBlank)
+                                                .collect(toList());
 
             if (!nonBlankValues.isEmpty()) {
                 String joined = nonBlankValues.stream()
-                    .limit(MAX_METADATA_VALUES)
-                    .collect(joining(", "));
+                                              .limit(MAX_METADATA_VALUES)
+                                              .collect(joining(", "));
                 sb.append("\t").append(label).append(joined);
                 if (nonBlankValues.size() > MAX_METADATA_VALUES) {
                     sb.append(", ...");
@@ -287,14 +287,15 @@ public class ContentGenerator implements SubscriptionGenerator<IndexableObject> 
         String element = fieldParts[1];
         String qualifier = fieldParts.length > 2 ? fieldParts[2] : null;
         return itemService.getMetadata(item, schema, element, qualifier, Item.ANY)
-            .stream()
-            .map(MetadataValue::getValue)
-            .filter(Objects::nonNull)
-            .collect(toList());
+                          .stream()
+                          .map(MetadataValue::getValue)
+                          .filter(Objects::nonNull)
+                          .collect(toList());
     }
 
     public void setEntityType2Disseminator(Map<String, SubscriptionDsoMetadataForEmailCompose>
-                                               entityType2Disseminator) {
+                                                   entityType2Disseminator) {
         this.entityType2Disseminator = entityType2Disseminator;
     }
+
 }

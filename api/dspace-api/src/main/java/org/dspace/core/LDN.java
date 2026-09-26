@@ -162,7 +162,7 @@ public class LDN {
                         .orElseThrow(() -> new IOException("No LDN template path configured"))
         );
         String ldnFilePath = SecureFileAccess.calculateAbsolutePathUsingBaseDir(ldnMessageFile,
-                allowedBasePaths.get(0));
+                allowedBasePaths.getFirst());
         try (
             InputStream is = SecureFileAccess.getInputStream(ldnFilePath, allowedBasePaths, "ldn");
             InputStreamReader ir = new InputStreamReader(is, "UTF-8");

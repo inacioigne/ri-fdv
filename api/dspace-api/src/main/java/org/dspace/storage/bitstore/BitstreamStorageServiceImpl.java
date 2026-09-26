@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import jakarta.annotation.Nullable;
 import org.apache.commons.collections.CollectionUtils;
@@ -25,11 +26,11 @@ import org.apache.logging.log4j.Logger;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.checker.service.ChecksumHistoryService;
 import org.dspace.content.Bitstream;
-import org.dspace.content.Item;
-import org.dspace.content.MetadataValue;
+import org.dspace.content.service.BitstreamLinkingService;
 import org.dspace.content.service.BitstreamService;
 import org.dspace.core.Context;
 import org.dspace.core.Utils;
+import org.dspace.services.ConfigurationService;
 import org.dspace.storage.bitstore.service.BitstreamStorageService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,10 @@ public class BitstreamStorageServiceImpl implements BitstreamStorageService, Ini
     protected BitstreamService bitstreamService;
     @Autowired(required = true)
     protected ChecksumHistoryService checksumHistoryService;
+    @Autowired(required = true)
+    protected BitstreamLinkingService bitstreamLinkingService;
+    @Autowired(required = true)
+    protected ConfigurationService configurationService;
 
     /**
      * asset stores
@@ -359,43 +364,6 @@ public class BitstreamStorageServiceImpl implements BitstreamStorageService, Ini
     }
 
     /**
-     * @param context   The relevant DSpace Context.
-     * @param bitstream the bitstream to be cloned
-     * @return id of the clone bitstream.
-     * A general class of exceptions produced by failed or interrupted I/O operations.
-     * @throws SQLException       An exception that provides information on a database access error or other errors.
-     * @throws AuthorizeException Exception indicating the current user of the context does not have permission
-     *                            to perform a particular action.
-     */
-    @Override
-    public Bitstream clone(Context context, Bitstream bitstream) throws SQLException, IOException, AuthorizeException {
-        Bitstream clonedBitstream = null;
-        try {
-            // Update our bitstream but turn off the authorization system since permissions
-            // haven't been set at this point in time.
-            context.turnOffAuthorisationSystem();
-            clonedBitstream = bitstreamService.clone(context, bitstream);
-            clonedBitstream.setStoreNumber(bitstream.getStoreNumber());
-
-            List<MetadataValue> metadataValues = bitstreamService.getMetadata(bitstream, Item.ANY, Item.ANY, Item.ANY,
-                    Item.ANY);
-
-            for (MetadataValue metadataValue : metadataValues) {
-                bitstreamService.addMetadata(context, clonedBitstream, metadataValue.getMetadataField(),
-                        metadataValue.getLanguage(), metadataValue.getValue(), metadataValue.getAuthority(),
-                        metadataValue.getConfidence());
-            }
-            bitstreamService.update(context, clonedBitstream);
-        } catch (AuthorizeException e) {
-            log.error(e);
-            // Can never happen since we turn off authorization before we update
-        } finally {
-            context.restoreAuthSystemState();
-        }
-        return clonedBitstream;
-    }
-
-    /**
      * Migrates all assets off of one assetstore to another
      *
      * @param assetstoreSource      source assetstore
@@ -492,12 +460,13 @@ public class BitstreamStorageServiceImpl implements BitstreamStorageService, Ini
     protected boolean isRecent(Long lastModified) {
         long now = Instant.now().toEpochMilli();
 
-        if (lastModified >= now) {
+        if (lastModified == null || lastModified >= now) {
             return true;
         }
 
-        // Less than one hour old
-        return (now - lastModified) < (1 * 60 * 1000);
+        long waitWindowHours = configurationService.getLongProperty("bitstream.cleanup.isRecent.hours", 1L);
+        long waitWindowMilli = TimeUnit.HOURS.toMillis(waitWindowHours);
+        return (now - lastModified) < waitWindowMilli;
     }
 
     protected BitStoreService getStore(int position) throws IOException {
