@@ -4,18 +4,16 @@
 ## {1}  Name of collection
 ## {2}  handle
 ##
-#set($subject = "${config.get('dspace.name')}: Submission Approved and Archived")
+#set($subject = "${config.get('dspace.name')}: Submissão aprovada")
 
-You submitted: ${params[0]}
+Submissão: ${params[0]}
 
-To collection: ${params[1]}
+Coleção: ${params[1]}
 
-Your submission has been accepted and archived in ${config.get('dspace.name')},
-and it has been assigned the following identifier:
+Sua submissão foi aceita e arquivada no Repositório Institucional da FDV com o seguinte identificador:
 ${params[2]}
 
-Please use this identifier when citing your submission.
+Por favor, utilize este identificador ao citar sua contribuição.
 
-Many thanks!
 
-The ${config.get('dspace.name')} Team
+Equipe RI FDV

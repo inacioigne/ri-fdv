@@ -6,19 +6,18 @@
 ## {3}  Description of task
 ## {4}  link to 'my DSpace' page
 ##
-#set($subject = "${config.get('dspace.name')}: You have a new task")
+#set($subject = "${config.get('dspace.name')}: Você tem uma nova tarefa")
 
-A new item has been submitted:
+Um novo item foi submetido:
 
-Title:        ${params[0]}
-Collection:   ${params[1]}
-Submitted by: ${params[2]}
+Título:        ${params[0]}
+Coleção:   ${params[1]}
+Enviado por: ${params[2]}
 
-${params[3]}
+Nova tarefa disponível.
 
-To claim this task, please visit your "My${config.get('dspace.shortname')}"
-page:  ${params[4]}
+Para reivindicar esta tarefa, visite sua conta "MyDSpace".
+página:https://ri.fdv.br/mydspace
 
-Many thanks!
 
-The ${config.get('dspace.name')} Team
+Equipe RI FDV
