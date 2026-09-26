@@ -1,0 +1,38 @@
+<ng-container *ngVar="(communitiesRD$ | async) as communitiesRD">
+    @if (communitiesRD?.hasSucceeded ) {
+    <div>
+        <h2>
+            {{'home.top-level-communities.head' | translate}}
+        </h2>
+        <p class="lead">{{'home.top-level-communities.help' | translate}}</p>
+        <div class="d-flex flex-column gap-4">
+            @for (community of communities; track community.uuid) {
+            <a [routerLink]="['/communities', community.uuid]" class="text-decoration-none">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{ community.name }}
+                        </h5>
+                        <p class="card-text">{{ community.text }}</p>
+                    </div>
+                </div>
+
+            </a>
+            }
+        </div>
+        <!-- <ds-viewable-collection
+        [config]="config"
+        [sortConfig]="sortConfig"
+        [showRSS]="rssSortConfig"
+        [objects]="communitiesRD$ | async"
+        [hideGear]="true">
+      </ds-viewable-collection> -->
+    </div>
+    }
+    @if (communitiesRD?.hasFailed ) {
+    <ds-error message="{{'error.top-level-communities' | translate}}"></ds-error>
+    }
+    @if (communitiesRD?.isLoading ) {
+    <ds-loading message="{{'loading.top-level-communities' | translate}}"></ds-loading>
+    }
+</ng-container>

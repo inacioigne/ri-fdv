@@ -68,7 +68,7 @@ export class TopLevelCommunityListComponent implements OnInit, OnDestroy {
   /**
    * The pagination id
    */
-  pageId = 'tl';
+  pageId = 'tl'; 
 
   /**
    * The sorting configuration for the community list itself, and the optional RSS feed button
