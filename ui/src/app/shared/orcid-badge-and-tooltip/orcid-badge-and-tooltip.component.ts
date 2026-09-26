@@ -1,12 +1,10 @@
-import {
-  AsyncPipe,
-  // NgClass,
-} from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   Input,
   OnInit,
 } from '@angular/core';
+import { MetadataValue } from '@dspace/core/shared/metadata.models';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -16,7 +14,6 @@ import {
 
 import { ConfigurationDataService } from '../../core/data/configuration-data.service';
 import { ConfigurationProperty } from '../../core/shared/configuration-property.model';
-import { MetadataValue } from '../../core/shared/metadata.models';
 import { getFirstSucceededRemoteDataPayload } from '../../core/shared/operators';
 
 /**
@@ -28,7 +25,6 @@ import { getFirstSucceededRemoteDataPayload } from '../../core/shared/operators'
   imports: [
     AsyncPipe,
     NgbTooltip,
-    // NgClass,
   ],
   templateUrl: './orcid-badge-and-tooltip.component.html',
   styleUrl: './orcid-badge-and-tooltip.component.scss',
@@ -64,10 +60,6 @@ export class OrcidBadgeAndTooltipComponent implements OnInit {
     private configurationService: ConfigurationDataService,
   ) { }
 
-  /**
-   * Initializes the component.
-   * Sets the tooltip text based on the presence of the authenticated timestamp.
-   */
   ngOnInit() {
     this.orcidTooltip = this.authenticatedTimestamp ?
       this.translateService.instant('person.orcid-tooltip.authenticated', { orcid: this.orcid.value }) :

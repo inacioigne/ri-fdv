@@ -1,7 +1,8 @@
 import {
   hasNoValue,
   hasValue,
-} from '../empty.util';
+} from '@dspace/shared/utils/empty.util';
+
 import { initialMenusState } from './initial-menus-state';
 import {
   ActivateMenuSectionAction,

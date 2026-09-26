@@ -17,6 +17,13 @@ import {
   UntypedFormGroup,
 } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { APP_CONFIG } from '@dspace/config/app-config.interface';
+import { RelationshipDataService } from '@dspace/core/data/relationship-data.service';
+import { APP_DATA_SERVICES_MAP } from '@dspace/core/data-services-map-type';
+import { Item } from '@dspace/core/shared/item.model';
+import { WorkspaceItem } from '@dspace/core/submission/models/workspaceitem.model';
+import { VocabularyOptions } from '@dspace/core/submission/vocabularies/models/vocabulary-options.model';
+import { createSuccessfulRemoteDataObject } from '@dspace/core/utilities/remote-data.utils';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   DYNAMIC_FORM_CONTROL_MAP_FN,
@@ -61,16 +68,7 @@ import {
   ReplaySubject,
 } from 'rxjs';
 
-import {
-  APP_CONFIG,
-  APP_DATA_SERVICES_MAP,
-} from '../../../../../config/app-config.interface';
 import { environment } from '../../../../../environments/environment';
-import { RelationshipDataService } from '../../../../core/data/relationship-data.service';
-import { Item } from '../../../../core/shared/item.model';
-import { WorkspaceItem } from '../../../../core/submission/models/workspaceitem.model';
-import { SubmissionObjectDataService } from '../../../../core/submission/submission-object-data.service';
-import { VocabularyOptions } from '../../../../core/submission/vocabularies/models/vocabulary-options.model';
 import {
   SaveForLaterSubmissionFormErrorAction,
   SaveSubmissionFormErrorAction,
@@ -79,10 +77,11 @@ import {
   SaveSubmissionSectionFormSuccessAction,
 } from '../../../../submission/objects/submission-objects.actions';
 import { SubmissionService } from '../../../../submission/submission.service';
+import { SubmissionObjectService } from '../../../../submission/submission-object.service';
 import { LiveRegionService } from '../../../live-region/live-region.service';
 import { getLiveRegionServiceStub } from '../../../live-region/live-region.service.stub';
 import { SelectableListService } from '../../../object-list/selectable-list/selectable-list.service';
-import { createSuccessfulRemoteDataObject } from '../../../remote-data.utils';
+import { getMockFormBuilderService } from '../../testing/form-builder-service.mock';
 import { FormBuilderService } from '../form-builder.service';
 import { DsDynamicFormControlContainerComponent } from './ds-dynamic-form-control-container.component';
 import { dsDynamicFormControlMapFn } from './ds-dynamic-form-control-map-fn';
@@ -103,6 +102,7 @@ import { DsDynamicOneboxComponent } from './models/onebox/dynamic-onebox.compone
 import { DynamicOneboxModel } from './models/onebox/dynamic-onebox.model';
 import { DsDynamicRelationGroupComponent } from './models/relation-group/dynamic-relation-group.components';
 import { DynamicRelationGroupModel } from './models/relation-group/dynamic-relation-group.model';
+import { DsDynamicRelationInlineGroupComponent } from './models/relation-inline-group/dynamic-relation-inline-group.components';
 import { DsDynamicScrollableDropdownComponent } from './models/scrollable-dropdown/dynamic-scrollable-dropdown.component';
 import { DynamicScrollableDropdownModel } from './models/scrollable-dropdown/dynamic-scrollable-dropdown.model';
 import { DsDynamicTagComponent } from './models/tag/dynamic-tag.component';
@@ -120,6 +120,8 @@ describe('DsDynamicFormControlContainerComponent test suite', () => {
 
   const vocabularyOptions: VocabularyOptions = {
     name: 'type_programme',
+    metadata: null,
+    scope: null,
     closed: false,
   };
   const formModel = [
@@ -186,8 +188,23 @@ describe('DsDynamicFormControlContainerComponent test suite', () => {
       submissionId: '1234',
       id: 'relationGroup',
       formConfiguration: [],
+      isInlineGroup: false,
       mandatoryField: '',
       name: 'relationGroup',
+      relationFields: [],
+      scopeUUID: '',
+      submissionScope: '',
+      repeatable: false,
+      metadataFields: [],
+      hasSelectableMetadata: false,
+    }),
+    new DynamicRelationGroupModel({
+      submissionId: '1234',
+      id: 'inlineRelationGroup',
+      formConfiguration: [],
+      isInlineGroup: true,
+      mandatoryField: '',
+      name: 'inlineRelationGroup',
       relationFields: [],
       scopeUUID: '',
       submissionScope: '',
@@ -221,9 +238,9 @@ describe('DsDynamicFormControlContainerComponent test suite', () => {
   const testItem: Item = new Item();
   const testWSI: WorkspaceItem = new WorkspaceItem();
   testWSI.item = of(createSuccessfulRemoteDataObject(testItem));
-  const actions$: ReplaySubject<any> = new ReplaySubject<any>(1);
-
   const renderer = jasmine.createSpyObj('Renderer2', ['setAttribute']);
+
+  const actions$: ReplaySubject<any> = new ReplaySubject<any>(1);
 
   beforeEach(waitForAsync(() => {
 
@@ -246,10 +263,10 @@ describe('DsDynamicFormControlContainerComponent test suite', () => {
         { provide: Store, useValue: {} },
         { provide: RelationshipDataService, useValue: {} },
         { provide: SelectableListService, useValue: {} },
-        { provide: FormBuilderService, useValue: {} },
+        { provide: FormBuilderService, useValue: getMockFormBuilderService() },
         { provide: SubmissionService, useValue: {} },
         {
-          provide: SubmissionObjectDataService,
+          provide: SubmissionObjectService,
           useValue: {
             findById: () => of(createSuccessfulRemoteDataObject(testWSI)),
           },
@@ -395,10 +412,11 @@ describe('DsDynamicFormControlContainerComponent test suite', () => {
     expect(testFn(formModel[19])).toEqual(DsDynamicListComponent);
     expect(testFn(formModel[20])).toEqual(DsDynamicListComponent);
     expect(testFn(formModel[21])).toEqual(DsDynamicRelationGroupComponent);
-    expect(testFn(formModel[22])).toEqual(DsDatePickerComponent);
-    expect(testFn(formModel[23])).toEqual(DsDynamicLookupComponent);
+    expect(testFn(formModel[22])).toEqual(DsDynamicRelationInlineGroupComponent);
+    expect(testFn(formModel[23])).toEqual(DsDatePickerComponent);
     expect(testFn(formModel[24])).toEqual(DsDynamicLookupComponent);
-    expect(testFn(formModel[25])).toEqual(DsDynamicFormGroupComponent);
+    expect(testFn(formModel[25])).toEqual(DsDynamicLookupComponent);
+    expect(testFn(formModel[26])).toEqual(DsDynamicFormGroupComponent);
   });
 
   describe('store action subscriptions', () => {
@@ -420,7 +438,7 @@ describe('DsDynamicFormControlContainerComponent test suite', () => {
 
     it('should call announceErrorMessages on SAVE_SUBMISSION_FORM_ERROR', () => {
       spyOn(component, 'announceErrorMessages');
-      actions$.next(new SaveSubmissionFormErrorAction('1234'));
+      actions$.next(new SaveSubmissionFormErrorAction('1234', null, null));
       expect(component.announceErrorMessages).toHaveBeenCalled();
     });
 
@@ -432,7 +450,7 @@ describe('DsDynamicFormControlContainerComponent test suite', () => {
 
     it('should call announceErrorMessages on SAVE_SUBMISSION_SECTION_FORM_ERROR', () => {
       spyOn(component, 'announceErrorMessages');
-      actions$.next(new SaveSubmissionSectionFormErrorAction('1234'));
+      actions$.next(new SaveSubmissionSectionFormErrorAction('1234', null, null));
       expect(component.announceErrorMessages).toHaveBeenCalled();
     });
   });

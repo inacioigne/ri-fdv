@@ -3,21 +3,22 @@ import {
   Injectable,
 } from '@angular/core';
 import {
+  APP_CONFIG,
+  AppConfig,
+} from '@dspace/config/app-config.interface';
+import { isNotEmpty } from '@dspace/shared/utils/empty.util';
+import {
   Request,
   Response,
 } from 'express';
 
-import {
-  APP_CONFIG,
-  AppConfig,
-} from '../../../config/app-config.interface';
 import { environment } from '../../../environments/environment';
 import {
   REQUEST,
   RESPONSE,
 } from '../../../express.tokens';
-import { isNotEmpty } from '../../shared/empty.util';
 import { HardRedirectService } from './hard-redirect.service';
+import { ServerResponseService } from './server-response.service';
 
 
 /**
@@ -30,6 +31,7 @@ export class ServerHardRedirectService extends HardRedirectService {
     @Inject(APP_CONFIG) protected appConfig: AppConfig,
     @Inject(REQUEST) protected req: Request,
     @Inject(RESPONSE) protected res: Response,
+    private responseService: ServerResponseService,
   ) {
     super();
   }
@@ -41,6 +43,7 @@ export class ServerHardRedirectService extends HardRedirectService {
    *    the page to redirect to
    * @param statusCode
    *    optional HTTP status code to use for redirect (default = 302, which is a temporary redirect)
+   * @param shouldSetCorsHeader
    */
   redirect(url: string, statusCode?: number) {
     if (url === this.req.url) {

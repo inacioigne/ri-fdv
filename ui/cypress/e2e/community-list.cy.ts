@@ -1,7 +1,6 @@
 import { testA11y } from 'cypress/support/utils';
 
 describe('Community List Page', () => {
-
   function validateHierarchyLevel(currentLevel = 1): void {
     // Find all <cdk-tree-node> elements with the current aria-level
     cy.get(`ds-community-list cdk-tree-node.expandable-node[aria-level="${currentLevel}"]`).should('exist').then(($nodes) => {

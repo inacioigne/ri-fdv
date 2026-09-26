@@ -5,6 +5,11 @@ import {
 } from 'node:fs';
 import { join } from 'node:path';
 
+import { BuildConfig } from '@dspace/config/build-config.interface';
+import {
+  isEmpty,
+  isNotEmpty,
+} from '@dspace/shared/utils/empty.util';
 import {
   blue,
   bold,
@@ -13,13 +18,11 @@ import {
 } from 'colors';
 import { load } from 'js-yaml';
 
-import {
-  isEmpty,
-  isNotEmpty,
-} from '../app/shared/empty.util';
 import { ServerHashedFileMapping } from '../modules/dynamic-hash/hashed-file-mapping.server';
-import { AppConfig } from './app-config.interface';
-import { BuildConfig } from './build-config.interface';
+import {
+  AppConfig,
+  toClientConfig,
+} from './app-config.interface';
 import { Config } from './config.interface';
 import { mergeConfig } from './config.util';
 import { DefaultAppConfig } from './default-app-config';
@@ -124,9 +127,9 @@ const getEnvConfigFilePath = (env: Environment) => {
 
 const overrideWithConfig = (config: Config, pathToConfig: string) => {
   try {
-    console.log(`Overriding app config with ${pathToConfig}`);
+    console.info(`Overriding app config with ${pathToConfig}`);
     const externalConfig = readFileSync(pathToConfig, 'utf8');
-    mergeConfig(config, load(externalConfig));
+    mergeConfig(config, load(externalConfig) as AppConfig);
   } catch (err) {
     console.error(err);
   }
@@ -143,7 +146,7 @@ const overrideWithEnvironment = (config: Config, key: string = '') => {
       } else {
         const value = ENV(variable, true);
         if (isNotEmpty(value)) {
-          console.log(`Applying environment variable ${DSPACE(variable)} with value ${value}`);
+          console.info(`Applying environment variable ${DSPACE(variable)} with value ${value}`);
           switch (typeof innerConfig) {
             case 'number':
               config[property] = getNumberFromString(value);
@@ -180,7 +183,6 @@ const buildBaseUrl = (config: ServerConfig): void => {
   }
 };
 
-
 /**
  * Build app config with the following chain of override.
  *
@@ -200,13 +202,13 @@ export const buildAppConfig = (destConfigPath?: string, mapping?: ServerHashedFi
 
   switch (env) {
     case 'production':
-      console.log(`Building ${red.bold(`production`)} app config`);
+      console.info(`Building ${red.bold(`production`)} app config`);
       break;
     case 'test':
-      console.log(`Building ${blue.bold(`test`)} app config`);
+      console.info(`Building ${blue.bold(`test`)} app config`);
       break;
     default:
-      console.log(`Building ${green.bold(`development`)} app config`);
+      console.info(`Building ${green.bold(`development`)} app config`);
   }
 
   // override with default config
@@ -259,8 +261,8 @@ export const buildAppConfig = (destConfigPath?: string, mapping?: ServerHashedFi
   buildBaseUrl(appConfig.rest);
 
   if (isNotEmpty(destConfigPath)) {
-    const content = JSON.stringify(appConfig, null, 2);
-
+    const clientConfig = toClientConfig(appConfig);
+    const content = JSON.stringify(clientConfig, null, 2);
     writeFileSync(destConfigPath, content);
     if (mapping !== undefined) {
       mapping.add(destConfigPath, content);
@@ -275,7 +277,7 @@ export const buildAppConfig = (destConfigPath?: string, mapping?: ServerHashedFi
       }
     }
 
-    console.log(`Angular ${bold('config.json')} file generated correctly at ${bold(destConfigPath)} \n`);
+    console.info(`Angular ${bold('config.json')} file generated correctly at ${bold(destConfigPath)} \n`);
   }
 
   return appConfig;

@@ -20,10 +20,10 @@ import {
 } from 'node:path';
 import zlib from 'node:zlib';
 
+import { hasValue } from '@dspace/shared/utils/empty.util';
 import { globSync } from 'glob';
 import { parse } from 'node-html-parser';
 
-import { hasValue } from '../../app/shared/empty.util';
 import {
   HashedFileMapping,
   ID,

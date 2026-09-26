@@ -14,9 +14,8 @@
  * from your application's main.server.ts file, as seen below with the
  * import for `ngExpressEngine`.
  */
-
-import 'zone.js/node';
 import 'reflect-metadata';
+import 'zone.js/node';
 
 /* eslint-disable import/no-namespace */
 import * as morgan from 'morgan';
@@ -28,7 +27,6 @@ import { LRUCache } from 'lru-cache';
 import { isbot } from 'isbot';
 import { createCertificate } from 'pem';
 import { createServer } from 'https';
-import { json } from 'body-parser';
 import { createHttpTerminator } from 'http-terminator';
 
 import { readFileSync } from 'fs';
@@ -39,25 +37,26 @@ import { enableProdMode } from '@angular/core';
 
 import { environment } from './src/environments/environment';
 import { createProxyMiddleware } from 'http-proxy-middleware';
-import { hasValue } from './src/app/shared/empty.util';
+import { hasValue } from '@dspace/shared/utils/empty.util';
 import { UIServerConfig } from './src/config/ui-server-config.interface';
 import bootstrap from './src/main.server';
 import { buildAppConfig } from './src/config/config.server';
 import {
   APP_CONFIG,
   AppConfig,
+  toClientConfig,
 } from './src/config/app-config.interface';
 import { extendEnvironmentWithAppConfig } from './src/config/config.util';
 import { ServerHashedFileMapping } from './src/modules/dynamic-hash/hashed-file-mapping.server';
 import { logStartupMessage } from './startup-message';
-import { TOKENITEM } from './src/app/core/auth/models/auth-token-info.model';
+import { TOKENITEM } from '@dspace/core/auth/models/auth-token-info.model';
 import { CommonEngine } from '@angular/ssr/node';
 import { APP_BASE_HREF } from '@angular/common';
 import {
   REQUEST,
   RESPONSE,
 } from './src/express.tokens';
-import { SsrExcludePatterns } from "./src/config/ssr-config.interface";
+import { SsrExcludePatterns } from './src/config/ssr-config.interface';
 
 /*
  * Set path for the browser application's dist folder
@@ -134,7 +133,7 @@ export function app() {
    * Add JSON parser for request bodies
    * See [body-parser](https://github.com/expressjs/body-parser)
    */
-  server.use(json());
+  server.use(express.json());
 
   server.engine('ejs', ejs.renderFile);
 
@@ -182,10 +181,14 @@ export function app() {
    * When it is present, the rateLimiter will be enabled. When it is undefined, the rateLimiter will be disabled.
    */
   if (hasValue((environment.ui as UIServerConfig).rateLimiter)) {
-    const RateLimit = require('express-rate-limit');
-    const limiter = new RateLimit({
+    const { rateLimit } = require('express-rate-limit')
+    const limiter = rateLimit({
       windowMs: (environment.ui as UIServerConfig).rateLimiter.windowMs,
-      max: (environment.ui as UIServerConfig).rateLimiter.max,
+      limit: (environment.ui as UIServerConfig).rateLimiter.limit,
+      standardHeaders: true,
+      legacyHeaders: false,
+      // don't log ERR_ERL_PERMISSIVE_TRUST_PROXY if we are trusting proxies
+      validate: {trustProxy: !environment.ui.useProxies},
     });
     server.use(limiter);
   }
@@ -271,7 +274,7 @@ function serverSideRender(req, res, next, sendToUser: boolean = true) {
         },
         {
           provide: APP_CONFIG,
-          useValue: environment,
+          useValue: toClientConfig(environment as AppConfig),
         },
       ],
     })

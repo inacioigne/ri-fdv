@@ -11,6 +11,7 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
+import { hasValueOperator } from '@dspace/shared/utils/empty.util';
 import {
   NgbTooltip,
   Placement,
@@ -30,7 +31,6 @@ import {
 
 import { ContextHelp } from '../context-help.model';
 import { ContextHelpService } from '../context-help.service';
-import { hasValueOperator } from '../empty.util';
 import { PlacementDir } from './placement-dir.model';
 
 type ParsedContent = ({href?: string, text: string})[];

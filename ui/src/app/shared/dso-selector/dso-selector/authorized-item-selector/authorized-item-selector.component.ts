@@ -10,6 +10,11 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { NotificationsService } from '@dspace/core/notification-system/notifications.service';
+import { followLink } from '@dspace/core/shared/follow-link-config.model';
+import { ItemSearchResult } from '@dspace/core/shared/object-collection/item-search-result.model';
+import { SearchResult } from '@dspace/core/shared/search/models/search-result.model';
+import { hasValue } from '@dspace/shared/utils/empty.util';
 import {
   TranslateModule,
   TranslateService,
@@ -19,12 +24,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ItemDataService } from 'src/app/core/data/item-data.service';
 import { Item } from 'src/app/core/shared/item.model';
-import { SearchService } from 'src/app/core/shared/search/search.service';
-import { hasValue } from 'src/app/shared/empty.util';
-import { NotificationsService } from 'src/app/shared/notifications/notifications.service';
-import { ItemSearchResult } from 'src/app/shared/object-collection/shared/item-search-result.model';
-import { SearchResult } from 'src/app/shared/search/models/search-result.model';
-import { followLink } from 'src/app/shared/utils/follow-link-config.model';
+import { SearchService } from 'src/app/shared/search/search.service';
 
 import { DSONameService } from '../../../../core/breadcrumbs/dso-name.service';
 import { FindListOptions } from '../../../../core/data/find-list-options.model';

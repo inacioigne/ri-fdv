@@ -2,10 +2,9 @@ import {
   Pipe,
   PipeTransform,
 } from '@angular/core';
+import { LocaleService } from '@dspace/core/locale/locale.service';
 import { filesize } from 'filesize';
 import { take } from 'rxjs/operators';
-
-import { LocaleService } from '../../core/locale/locale.service';
 
 /*
  * Convert bytes into largest possible unit.

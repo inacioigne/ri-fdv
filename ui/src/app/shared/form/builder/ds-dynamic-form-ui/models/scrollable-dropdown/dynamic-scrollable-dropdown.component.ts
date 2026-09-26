@@ -12,16 +12,38 @@ import {
   ViewChild,
 } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
+import { CacheableObject } from '@dspace/core/cache/cacheable-object.model';
+import { FindAllDataImpl } from '@dspace/core/data/base/find-all-data';
+import {
+  buildPaginatedList,
+  PaginatedList,
+} from '@dspace/core/data/paginated-list.model';
+import { RemoteData } from '@dspace/core/data/remote-data';
+import {
+  APP_DATA_SERVICES_MAP,
+  LazyDataServicesMap,
+} from '@dspace/core/data-services-map-type';
+import { lazyDataService } from '@dspace/core/lazy-data-service';
+import { FormFieldMetadataValueObject } from '@dspace/core/shared/form/models/form-field-metadata-value.model';
+import { getFirstSucceededRemoteDataPayload } from '@dspace/core/shared/operators';
+import { PageInfo } from '@dspace/core/shared/page-info.model';
+import { VocabularyService } from '@dspace/core/submission/vocabularies/vocabulary.service';
+import {
+  hasValue,
+  isEmpty,
+} from '@dspace/shared/utils/empty.util';
 import {
   NgbDropdown,
   NgbDropdownModule,
+  NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 import {
+  DynamicFormControlCustomEvent,
   DynamicFormLayoutService,
   DynamicFormValidationService,
 } from '@ng-dynamic-forms/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import {
   Observable,
   of,
@@ -33,27 +55,9 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
-import {
-  APP_DATA_SERVICES_MAP,
-  LazyDataServicesMap,
-} from 'src/config/app-config.interface';
+import { FormBuilderService } from 'src/app/shared/form/builder/form-builder.service';
+import { SubmissionService } from 'src/app/submission/submission.service';
 
-import { CacheableObject } from '../../../../../../core/cache/cacheable-object.model';
-import { FindAllDataImpl } from '../../../../../../core/data/base/find-all-data';
-import {
-  buildPaginatedList,
-  PaginatedList,
-} from '../../../../../../core/data/paginated-list.model';
-import { RemoteData } from '../../../../../../core/data/remote-data';
-import { lazyDataService } from '../../../../../../core/lazy-data-service';
-import { getFirstSucceededRemoteDataPayload } from '../../../../../../core/shared/operators';
-import { PageInfo } from '../../../../../../core/shared/page-info.model';
-import { VocabularyService } from '../../../../../../core/submission/vocabularies/vocabulary.service';
-import {
-  hasValue,
-  isEmpty,
-} from '../../../../../empty.util';
-import { FormFieldMetadataValueObject } from '../../../models/form-field-metadata-value.model';
 import { DsDynamicVocabularyComponent } from '../dynamic-vocabulary.component';
 import { DynamicScrollableDropdownModel } from './dynamic-scrollable-dropdown.model';
 
@@ -66,7 +70,7 @@ import { DynamicScrollableDropdownModel } from './dynamic-scrollable-dropdown.mo
   templateUrl: './dynamic-scrollable-dropdown.component.html',
   imports: [
     AsyncPipe,
-    InfiniteScrollModule,
+    InfiniteScrollDirective,
     NgbDropdownModule,
     TranslateModule,
   ],
@@ -81,6 +85,7 @@ export class DsDynamicScrollableDropdownComponent extends DsDynamicVocabularyCom
   @Output() blur: EventEmitter<any> = new EventEmitter<any>();
   @Output() change: EventEmitter<any> = new EventEmitter<any>();
   @Output() focus: EventEmitter<any> = new EventEmitter<any>();
+  @Output() customEvent: EventEmitter<DynamicFormControlCustomEvent> = new EventEmitter();
 
   public currentValue: Observable<string>;
   public loading = false;
@@ -110,10 +115,13 @@ export class DsDynamicScrollableDropdownComponent extends DsDynamicVocabularyCom
     protected cdr: ChangeDetectorRef,
     protected layoutService: DynamicFormLayoutService,
     protected validationService: DynamicFormValidationService,
+    protected formBuilderService: FormBuilderService,
+    protected modalService: NgbModal,
+    protected submissionService: SubmissionService,
     protected parentInjector: Injector,
     @Inject(APP_DATA_SERVICES_MAP) private dataServiceMap: LazyDataServicesMap,
   ) {
-    super(vocabularyService, layoutService, validationService);
+    super(vocabularyService, layoutService, validationService, formBuilderService, modalService, submissionService);
   }
 
   /**

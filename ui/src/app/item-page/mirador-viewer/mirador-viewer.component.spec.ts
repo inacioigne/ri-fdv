@@ -5,6 +5,15 @@ import {
   waitForAsync,
 } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { BitstreamDataService } from '@dspace/core/data/bitstream-data.service';
+import { BundleDataService } from '@dspace/core/data/bundle-data.service';
+import { ConfigurationDataService } from '@dspace/core/data/configuration-data.service';
+import { ConfigurationProperty } from '@dspace/core/shared/configuration-property.model';
+import { Item } from '@dspace/core/shared/item.model';
+import { MetadataMap } from '@dspace/core/shared/metadata.models';
+import { TranslateLoaderMock } from '@dspace/core/testing/translate-loader.mock';
+import { createPaginatedList } from '@dspace/core/testing/utils.test';
+import { createSuccessfulRemoteDataObject$ } from '@dspace/core/utilities/remote-data.utils';
 import {
   TranslateLoader,
   TranslateModule,
@@ -16,16 +25,7 @@ import {
   toArray,
 } from 'rxjs/operators';
 
-import { BitstreamDataService } from '../../core/data/bitstream-data.service';
-import { BundleDataService } from '../../core/data/bundle-data.service';
-import { ConfigurationDataService } from '../../core/data/configuration-data.service';
-import { ConfigurationProperty } from '../../core/shared/configuration-property.model';
-import { Item } from '../../core/shared/item.model';
-import { MetadataMap } from '../../core/shared/metadata.models';
 import { HostWindowService } from '../../shared/host-window.service';
-import { TranslateLoaderMock } from '../../shared/mocks/translate-loader.mock';
-import { createSuccessfulRemoteDataObject$ } from '../../shared/remote-data.utils';
-import { createPaginatedList } from '../../shared/testing/utils.test';
 import { createRelationshipsObservable } from '../simple/item-types/shared/item.component.spec';
 import { MiradorViewerComponent } from './mirador-viewer.component';
 import { MiradorViewerService } from './mirador-viewer.service';

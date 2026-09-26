@@ -1,6 +1,6 @@
 .env
 local.cfg
-ui/dist.tar.gz
+ui-v9.3
 legacy
 GeoLite2-City.mmdb
 api-v9.3

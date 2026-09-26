@@ -54,3 +54,4 @@ export type ThemeConfig
   | RegExThemeConfig
   | HandleThemeConfig
   | UUIDThemeConfig;
+export const BASE_THEME_NAME = 'base';

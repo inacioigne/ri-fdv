@@ -12,6 +12,22 @@ import {
   ActivatedRoute,
   RouterLink,
 } from '@angular/router';
+import { DSONameService } from '@dspace/core/breadcrumbs/dso-name.service';
+import { AuthorizationDataService } from '@dspace/core/data/feature-authorization/authorization-data.service';
+import { FeatureID } from '@dspace/core/data/feature-authorization/feature-id';
+import {
+  getBitstreamDownloadRoute,
+  getBitstreamDownloadWithAccessTokenRoute,
+  getBitstreamRequestACopyRoute,
+} from '@dspace/core/router/utils/dso-route.utils';
+import { Bitstream } from '@dspace/core/shared/bitstream.model';
+import { Item } from '@dspace/core/shared/item.model';
+import { ItemRequest } from '@dspace/core/shared/item-request.model';
+import {
+  hasValue,
+  isNotEmpty,
+} from '@dspace/shared/utils/empty.util';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   TranslateModule,
   TranslateService,
@@ -26,21 +42,6 @@ import {
   switchMap,
 } from 'rxjs/operators';
 
-import {
-  getBitstreamDownloadRoute,
-  getBitstreamDownloadWithAccessTokenRoute,
-  getBitstreamRequestACopyRoute,
-} from '../../app-routing-paths';
-import { DSONameService } from '../../core/breadcrumbs/dso-name.service';
-import { AuthorizationDataService } from '../../core/data/feature-authorization/authorization-data.service';
-import { FeatureID } from '../../core/data/feature-authorization/feature-id';
-import { Bitstream } from '../../core/shared/bitstream.model';
-import { Item } from '../../core/shared/item.model';
-import { ItemRequest } from '../../core/shared/item-request.model';
-import {
-  hasValue,
-  isNotEmpty,
-} from '../empty.util';
 import { ThemedAccessStatusBadgeComponent } from '../object-collection/shared/badges/access-status-badge/themed-access-status-badge.component';
 
 @Component({
@@ -103,11 +104,15 @@ export class FileDownloadLinkComponent implements OnInit {
   canDownloadWithToken$: Observable<boolean>;
   canRequestACopy$: Observable<boolean>;
 
+  modalTitle: string;
+  modalContent: string;
+
   constructor(
     private authorizationService: AuthorizationDataService,
     public dsoNameService: DSONameService,
     private route: ActivatedRoute,
     private translateService: TranslateService,
+    private modalService: NgbModal,
   ) {
   }
 
@@ -180,5 +185,57 @@ export class FileDownloadLinkComponent implements OnInit {
   getDownloadLinkTitle(canDownload: boolean,canDownloadWithToken: boolean, bitstreamName: string): string {
     return (canDownload || canDownloadWithToken ? this.translateService.instant('file-download-link.download') :
       this.translateService.instant('file-download-link.request-copy')) + bitstreamName;
+  }
+
+  /**
+   * Audio transcript metadata value (`dspace.bitstream.transcript`), if present.
+   */
+  get audioTranscript(): string {
+    return this.bitstream?.firstMetadataValue('dspace.bitstream.transcript');
+  }
+
+  /**
+   * Video description metadata value (`dspace.bitstream.textalternative`), if present.
+   */
+  get videoDescription(): string {
+    return this.bitstream?.firstMetadataValue('dspace.bitstream.textalternative');
+  }
+
+  /**
+   * Media type metadata value (`dc.type`), if present.
+   */
+  get mediaType(): string {
+    return this.bitstream?.firstMetadataValue('dc.type');
+  }
+
+  /**
+   * Indicates whether media type metadata contains "video" (case-insensitive).
+   */
+  get isVideoMediaType(): boolean {
+    return this.mediaType?.toLowerCase().includes('video');
+  }
+
+  /**
+   * Indicates whether media type metadata contains "audio" (case-insensitive).
+   */
+  get isAudioMediaType(): boolean {
+    return this.mediaType?.toLowerCase().includes('audio');
+  }
+
+  /**
+   * Opens a large, scrollable modal showing text metadata.
+   *
+   * @param template Modal template reference.
+   * @param titleKey Translation key for modal title.
+   * @param content Plain text content to render in the modal body.
+   */
+  openTextModal(template, titleKey: string, content: string) {
+    this.modalTitle = this.translateService.instant(titleKey);
+    this.modalContent = content;
+    this.modalService.open(template, {
+      ariaLabelledBy: 'file-download-link-text-modal-title',
+      size: 'lg',
+      scrollable: true,
+    });
   }
 }

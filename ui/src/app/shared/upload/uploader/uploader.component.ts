@@ -12,6 +12,18 @@ import {
   Output,
   ViewEncapsulation,
 } from '@angular/core';
+import { CookieService } from '@dspace/core/cookies/cookie.service';
+import { DragService } from '@dspace/core/drag.service';
+import {
+  XSRF_COOKIE,
+  XSRF_REQUEST_HEADER,
+  XSRF_RESPONSE_HEADER,
+} from '@dspace/core/xsrf/xsrf.constants';
+import {
+  hasValue,
+  isNotEmpty,
+  isUndefined,
+} from '@dspace/shared/utils/empty.util';
 import { TranslateModule } from '@ngx-translate/core';
 import uniqueId from 'lodash/uniqueId';
 import {
@@ -21,19 +33,7 @@ import {
 } from 'ng2-file-upload';
 import { of } from 'rxjs';
 
-import { DragService } from '../../../core/drag.service';
-import { CookieService } from '../../../core/services/cookie.service';
-import {
-  XSRF_COOKIE,
-  XSRF_REQUEST_HEADER,
-  XSRF_RESPONSE_HEADER,
-} from '../../../core/xsrf/xsrf.constants';
 import { BtnDisabledDirective } from '../../btn-disabled.directive';
-import {
-  hasValue,
-  isNotEmpty,
-  isUndefined,
-} from '../../empty.util';
 import { LiveRegionService } from '../../live-region/live-region.service';
 import { UploaderOptions } from './uploader-options.model';
 import { UploaderProperties } from './uploader-properties.model';
@@ -94,6 +94,11 @@ export class UploaderComponent implements OnInit, AfterViewInit {
   @Input() ariaLabel: string;
 
   /**
+   * Component that defines the area in which `dragOver` events are processed
+   */
+  @Input() dragoverContainer = 'ds-app';
+
+  /**
    * The function to call when upload is completed
    */
   @Output() onCompleteItem: EventEmitter<any> = new EventEmitter<any>();
@@ -126,7 +131,11 @@ export class UploaderComponent implements OnInit, AfterViewInit {
 
   @HostListener('window:dragover', ['$event'])
   onDragOver(event: any) {
-
+    if (hasValue(this.dragoverContainer)) {
+      if (!event.target.closest(this.dragoverContainer)) {
+        return;
+      }
+    }
     if (this.enableDragOverDocument && this.dragService.isAllowedDragOverPage()) {
       // Only show drop area when dragging files or event is manually triggered
       const hasFiles = event.dataTransfer?.types ? Array.from(event.dataTransfer.types).includes('Files') : true;

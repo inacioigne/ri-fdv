@@ -11,10 +11,10 @@ import {
   Injectable,
   Optional,
 } from '@angular/core';
+import { hasValue } from '@dspace/shared/utils/empty.util';
 import isObject from 'lodash/isObject';
 import isString from 'lodash/isString';
 
-import { hasValue } from '../../app/shared/empty.util';
 import {
   HashedFileMapping,
   ID,
