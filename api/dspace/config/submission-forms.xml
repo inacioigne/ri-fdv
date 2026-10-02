@@ -2287,6 +2287,10 @@
                 <displayed-value>Faculdade de Direito de Vitoria</displayed-value>
                 <stored-value>Faculdade de Direito de Vitoria</stored-value>
             </pair>
+            <pair>
+                <displayed-value>Editora UniversidadES</displayed-value>
+                <stored-value>Editora UniversidadES</stored-value>
+            </pair>
         </value-pairs>
 
         <value-pairs value-pairs-name="common_sigla_ies" dc-term="initials">

@@ -37,7 +37,7 @@ export class ItemPageAbstractFieldComponent extends ItemPageFieldComponent {
      * In this component, we want to display values for metadata 'dc.description.abstract'
      */
     fields: string[] = [
-      'dc.description.abstract',
+      'dc.description.resumo',
     ];
 
     /**
@@ -48,5 +48,5 @@ export class ItemPageAbstractFieldComponent extends ItemPageFieldComponent {
     /**
      * Use the {@link MarkdownDirective} to render dc.description.abstract values
      */
-    enableMarkdown = true;
+    enableMarkdown = true; 
 }
