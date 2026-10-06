@@ -232,6 +232,7 @@
         </form>
 
         <form name="traditionalpagetwo">
+            <!-- AUTOR -->
             <row>
                 <field>
                     <dc-schema>dc</dc-schema>
@@ -239,8 +240,8 @@
                     <dc-qualifier></dc-qualifier>
                     <repeatable>true</repeatable>
                     <label>Autor(es):</label>
-                    <type-bind>Artigo de Periódico, Artigo de Evento, Livro, Capítulo de Livro,
-                        Relatório de Pesquisa, Outro</type-bind>
+                    <!-- <type-bind>Artigo de Periódico, Artigo de Evento, Livro, Capítulo de Livro,
+                        Relatório de Pesquisa, Outro</type-bind> -->
                     <input-type>name</input-type>
                     <hint>&lt;div class="alert alert-info"&gt; Descrição do
                         &lt;strong&gt;AUTOR&lt;/strong&gt; &lt;/div&gt; &lt;font
@@ -250,8 +251,8 @@
                         citação.</required>
                 </field>
             </row>
-            <!-- AUTOR -->
-            <row>
+            
+            <!-- <row>
                 <field>
                     <dc-schema>dc</dc-schema>
                     <dc-element>creator</dc-element>
@@ -268,7 +269,7 @@
                         citação.</required>
 
                 </field>
-            </row>
+            </row> -->
             <row>
                 <field>
                     <dc-schema>dc</dc-schema>
